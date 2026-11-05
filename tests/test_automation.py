@@ -118,3 +118,24 @@ def test_export_refuses_pending_and_unmerged(tmp_path):
     result=json.loads(cli('draft','--data',private,'--period','p-2020-01-26','--as-of',NOW).stdout)
     approval=tmp_path/'approval.json'; approval.write_text(json.dumps({'commit':run(private,'rev-parse','HEAD'),'merged':False,'merged_by':'synthetic-human'}))
     cli('export-local','--data',private,'--curation',result['curation'],'--output',result['output'],'--public',public,'--approval',approval,ok=False)
+
+def test_deployed_revision_dispatch_creates_only_one_addendum(tmp_path,monkeypatch):
+    from ucp_pulse import automation
+    private,_,_,_=repositories(tmp_path)
+    ledger=Store(private).state('periods')
+    first='p-2020-01-26:weekly:r1'; second='p-2020-01-26:weekly:r2'
+    ledger[first].update(status='abandoned',pr_number=999998)
+    ledger[second]={**ledger[first],'revision':2,'status':'abandoned','pr_number':999999}
+    Store(private).update_periods(ledger); run(private,'add','state'); run(private,'commit','-m','synthetic abandoned revisions'); run(private,'push','origin','main')
+    calls=[]
+    def fake_gh(*args,**kwargs): return []
+    def fake_draft(root,period_id,as_of,kind,revise,pr):
+        calls.append((period_id,revise))
+        updated,k,_=lifecycle(Store(root).state('periods'),period_id,kind,revise,pr)
+        return {'action':'human-edited','key':k,'ledger':updated}
+    monkeypatch.setattr(automation,'gh',fake_gh)
+    monkeypatch.setattr(automation,'draft_local',fake_draft)
+    automation.publish_due(private,'synthetic/private',NOW,revise_period='p-2020-01-26')
+    assert calls==[('p-2020-01-26',True)]
+    rows=Store(private).state('periods')
+    assert max(r['revision'] for r in rows.values())==3

@@ -65,3 +65,12 @@ request recollection rather than regress inventory/cursors. Local Git tests cove
 ordinary rejection replay, duplicate dispatch and crash recovery. Collection and
 drafting are separate jobs to keep collect at contents:write only. This raises
 the worst scheduled budget above 180 minutes/month; measure usage before enabling.
+
+## D018: P6 partial backfill, no fallback identity guesses
+The P6 GitHub REST response reported remaining=59. Stop subsequent GitHub reads
+and retain all S1-S6 cursors. PyPI returned project_urls=null for ucp-sdk, so S7
+cannot satisfy the specified binding and records failure. Do not substitute a
+homepage or an inferred repository. S8/S10 succeeded independently. The local
+history preview contains only these 21 collected revisions, all PENDING. Prior
+review fixtures are not substituted for a successful live history backfill.
+The feed is a current snapshot, not a guaranteed historical archive.

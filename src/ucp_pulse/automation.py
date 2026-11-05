@@ -138,7 +138,22 @@ def publish_due(root,repo,as_of,revise_period=None):
     clean_repo(root)
     command(root,'switch','main'); command(root,'fetch','origin','main'); command(root,'reset','--hard','origin/main')
     ledger=Store(root).state('periods')
-    keys=sorted(ledger,key=lambda k:(ledger[k]['start'],ledger[k]['revision']))
+    # Draft only the latest revision of each period. Older PRs can still be
+    # closed or merged independently, so reconcile their statuses separately.
+    latest={}
+    for key,row in ledger.items():
+        identity=(row['period_id'],row['type'])
+        if identity not in latest or row['revision']>ledger[latest[identity]]['revision']:
+            latest[identity]=key
+    for key,row in ledger.items():
+        if key in latest.values() or row['status']!='open' or not row.get('pr_number'): continue
+        prior=gh('pr','view',str(row['pr_number']),'--repo',repo,'--json','state')
+        if prior['state']=='MERGED': row['status']='published'
+        elif prior['state']=='CLOSED': row['status']='abandoned'
+    Store(root).update_periods(ledger)
+    commit(root,['state'],'draft: reconcile prior revisions')
+    command(root,'push','origin','HEAD:refs/heads/main')
+    keys=sorted(latest.values(),key=lambda k:(ledger[k]['start'],ledger[k]['revision']))
     for initial_key in keys:
         initial=ledger[initial_key]
         if initial['status'] not in {'due','open'} and initial['period_id']!=revise_period: continue
