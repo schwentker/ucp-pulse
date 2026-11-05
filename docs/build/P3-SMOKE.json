@@ -1,0 +1,24 @@
+{
+  "S8": {
+    "ok": true,
+    "url": "https://registry.npmjs.org/@ucp-js%2fsdk",
+    "retrieved_at": "2026-11-05T07:33:21.032119+00:00",
+    "summary": {
+      "name": "@ucp-js/sdk",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Universal-Commerce-Protocol/js-sdk.git"
+      },
+      "dist-tags": {
+        "latest": "0.5.1"
+      },
+      "version_count": 12
+    }
+  },
+  "S9": {
+    "ok": false,
+    "url": "https://api.github.com/graphql",
+    "retrieved_at": "2026-11-05T07:33:21.171505+00:00",
+    "error": "GitHub remaining 0 < 100; reset=1793867601"
+  }
+}

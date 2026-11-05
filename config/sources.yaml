@@ -1,0 +1,10 @@
+S1: {enabled: true}
+S2: {enabled: true}
+S3: {enabled: true}
+S4: {enabled: true}
+S5: {enabled: true}
+S6: {enabled: true}
+S7: {enabled: true}
+S8: {enabled: true, gate: 'local smoke succeeded 2026-11-05; 22 labeled registry cases'}
+S9: {enabled: false, reason: 'GitHub remaining 0 < 100; reset=1793867601 (local smoke 2026-11-05); GITHUB_TOKEN unset'}
+S10: {enabled: true, gate: '22 labeled feed cases; precision 100%; zero bare-UCP false positives'}

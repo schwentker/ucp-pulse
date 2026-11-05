@@ -1,0 +1,111 @@
+{
+  "origin": "synthetic",
+  "note": "Hand-labeled adversarial cases; dates, IDs, paths and content are synthetic, not upstream claims.",
+  "cases": [
+    {
+      "case": "semver",
+      "tag": "v0.1.0",
+      "scheme": "semver"
+    },
+    {
+      "case": "bare",
+      "tag": "0.1.0",
+      "scheme": "semver"
+    },
+    {
+      "case": "date",
+      "tag": "2020-01-01",
+      "scheme": "spec_date"
+    },
+    {
+      "case": "vdate",
+      "tag": "v2020-01-01",
+      "scheme": "spec_date"
+    },
+    {
+      "case": "suffix",
+      "tag": "2020-01-01.1",
+      "scheme": "spec_date_suffixed"
+    },
+    {
+      "case": "vsuffix",
+      "tag": "v2020-01-01-test",
+      "scheme": "spec_date_suffixed"
+    },
+    {
+      "case": "pre",
+      "tag": "v1.0.0-rc.1",
+      "scheme": "semver"
+    },
+    {
+      "case": "build",
+      "tag": "v1.0.0+test",
+      "scheme": "semver"
+    },
+    {
+      "case": "unknown",
+      "tag": "test",
+      "scheme": "unknown"
+    },
+    {
+      "case": "lightweight",
+      "tag": "v0.2.0",
+      "scheme": "semver"
+    },
+    {
+      "case": "annotated",
+      "tag": "v0.2.0",
+      "scheme": "semver"
+    },
+    {
+      "case": "retarget",
+      "tag": "v0.2.0",
+      "scheme": "semver"
+    },
+    {
+      "case": "delete_tag",
+      "tag": "v0.2.0",
+      "scheme": "semver"
+    },
+    {
+      "case": "delete_release",
+      "tag": "v0.2.0",
+      "scheme": "semver"
+    },
+    {
+      "case": "notes",
+      "tag": "v0.2.0",
+      "scheme": "semver"
+    },
+    {
+      "case": "asset_digest",
+      "tag": "v0.2.0",
+      "scheme": "semver"
+    },
+    {
+      "case": "draft",
+      "tag": "v0.2.0",
+      "scheme": "semver"
+    },
+    {
+      "case": "prerelease",
+      "tag": "v0.2.0",
+      "scheme": "semver"
+    },
+    {
+      "case": "release_after_tag",
+      "tag": "v0.2.0",
+      "scheme": "semver"
+    },
+    {
+      "case": "two_versions",
+      "tag": "v0.2.0",
+      "scheme": "semver"
+    },
+    {
+      "case": "unchanged",
+      "tag": "v0.2.0",
+      "scheme": "semver"
+    }
+  ]
+}

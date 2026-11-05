@@ -1,0 +1,94 @@
+{
+  "origin": "synthetic",
+  "note": "Hand-labeled adversarial cases; dates, IDs, paths and content are synthetic, not upstream claims.",
+  "cases": [
+    {
+      "case": "initial",
+      "reject": false
+    },
+    {
+      "case": "wrong_repo",
+      "reject": true
+    },
+    {
+      "case": "wrong_host",
+      "reject": true
+    },
+    {
+      "case": "wrong_name",
+      "reject": true
+    },
+    {
+      "case": "missing_binding",
+      "reject": true
+    },
+    {
+      "case": "git_suffix",
+      "reject": false
+    },
+    {
+      "case": "case_binding",
+      "reject": false
+    },
+    {
+      "case": "multiple_versions",
+      "reject": false
+    },
+    {
+      "case": "tag_move",
+      "reject": false
+    },
+    {
+      "case": "yank",
+      "reject": false
+    },
+    {
+      "case": "digest_change",
+      "reject": false
+    },
+    {
+      "case": "deleted_version",
+      "reject": false
+    },
+    {
+      "case": "missing_time",
+      "reject": false
+    },
+    {
+      "case": "mismatched_publication_date",
+      "reject": false
+    },
+    {
+      "case": "unchanged",
+      "reject": false
+    },
+    {
+      "case": "empty_versions",
+      "reject": true
+    },
+    {
+      "case": "missing_latest_version",
+      "reject": true
+    },
+    {
+      "case": "restore",
+      "reject": false
+    },
+    {
+      "case": "file_change",
+      "reject": false
+    },
+    {
+      "case": "empty_files",
+      "reject": false
+    },
+    {
+      "case": "deprecation",
+      "reject": false
+    },
+    {
+      "case": "wrong_version_repo",
+      "reject": true
+    }
+  ]
+}

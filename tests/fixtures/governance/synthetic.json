@@ -1,0 +1,132 @@
+{
+  "origin": "synthetic",
+  "note": "Hand-labeled adversarial cases; dates, IDs, paths and content are synthetic, not upstream claims.",
+  "cases": [
+    {
+      "case": "initial",
+      "path": "GOVERNANCE.md",
+      "before": null,
+      "after": "rules"
+    },
+    {
+      "case": "edit",
+      "path": "GOVERNANCE.md",
+      "before": "rules",
+      "after": "new rules"
+    },
+    {
+      "case": "delete",
+      "path": "GOVERNANCE.md",
+      "before": "rules",
+      "after": null
+    },
+    {
+      "case": "restore",
+      "path": "GOVERNANCE.md",
+      "before": null,
+      "after": "restored"
+    },
+    {
+      "case": "maintainers",
+      "path": "MAINTAINERS.md",
+      "before": "one",
+      "after": "two"
+    },
+    {
+      "case": "election",
+      "path": "TC_ELECTIONS.md",
+      "before": "old",
+      "after": "new"
+    },
+    {
+      "case": "charter",
+      "path": "charters/test.md",
+      "before": "v1",
+      "after": "v2"
+    },
+    {
+      "case": "nested",
+      "path": "groups/test/CHARTER.md",
+      "before": "a",
+      "after": "b"
+    },
+    {
+      "case": "empty",
+      "path": "GOVERNANCE.md",
+      "before": "a",
+      "after": ""
+    },
+    {
+      "case": "unicode",
+      "path": "GOVERNANCE.md",
+      "before": "a",
+      "after": "caf\u00e9"
+    },
+    {
+      "case": "crlf",
+      "path": "GOVERNANCE.md",
+      "before": "a\nb",
+      "after": "a\r\nb"
+    },
+    {
+      "case": "trim",
+      "path": "GOVERNANCE.md",
+      "before": "rules",
+      "after": " rules "
+    },
+    {
+      "case": "heading",
+      "path": "GOVERNANCE.md",
+      "before": "# A",
+      "after": "# B"
+    },
+    {
+      "case": "link",
+      "path": "GOVERNANCE.md",
+      "before": "[a](https://example.invalid/a)",
+      "after": "[a](https://example.invalid/b)"
+    },
+    {
+      "case": "order",
+      "path": "GOVERNANCE.md",
+      "before": "a\nb",
+      "after": "b\na"
+    },
+    {
+      "case": "case",
+      "path": "GOVERNANCE.md",
+      "before": "a",
+      "after": "A"
+    },
+    {
+      "case": "list",
+      "path": "MAINTAINERS.md",
+      "before": "- a",
+      "after": "- b"
+    },
+    {
+      "case": "vote",
+      "path": "TC_ELECTIONS.md",
+      "before": "1",
+      "after": "2"
+    },
+    {
+      "case": "move_from",
+      "path": "old/CHARTER.md",
+      "before": "a",
+      "after": null
+    },
+    {
+      "case": "move_to",
+      "path": "new/CHARTER.md",
+      "before": null,
+      "after": "a"
+    },
+    {
+      "case": "already_deleted",
+      "path": "GOVERNANCE.md",
+      "before": null,
+      "after": null
+    }
+  ]
+}

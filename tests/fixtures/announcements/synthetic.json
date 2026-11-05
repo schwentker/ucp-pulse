@@ -1,0 +1,90 @@
+{
+  "origin": "synthetic",
+  "note": "Hand-labeled adversarial cases; dates, IDs, paths and content are synthetic, not upstream claims.",
+  "cases": [
+    {
+      "case": "dated",
+      "expected": 1
+    },
+    {
+      "case": "two_entries",
+      "expected": 2
+    },
+    {
+      "case": "edited",
+      "expected": 1
+    },
+    {
+      "case": "reordered",
+      "expected": 2
+    },
+    {
+      "case": "deleted",
+      "expected": 1
+    },
+    {
+      "case": "duplicate_discussion_link",
+      "expected": 1
+    },
+    {
+      "case": "nonmaintainer_link",
+      "expected": 1
+    },
+    {
+      "case": "no_date_error",
+      "expected": 0
+    },
+    {
+      "case": "invalid_date_error",
+      "expected": 0
+    },
+    {
+      "case": "duplicate_identity_error",
+      "expected": 0
+    },
+    {
+      "case": "empty",
+      "expected": 0
+    },
+    {
+      "case": "subheading",
+      "expected": 1
+    },
+    {
+      "case": "crlf",
+      "expected": 1
+    },
+    {
+      "case": "unicode",
+      "expected": 1
+    },
+    {
+      "case": "punctuation_slug",
+      "expected": 1
+    },
+    {
+      "case": "date_only",
+      "expected": 1
+    },
+    {
+      "case": "deep_heading",
+      "expected": 1
+    },
+    {
+      "case": "body_date",
+      "expected": 1
+    },
+    {
+      "case": "moving_entry",
+      "expected": 1
+    },
+    {
+      "case": "deletion_rerun",
+      "expected": 1
+    },
+    {
+      "case": "restore",
+      "expected": 1
+    }
+  ]
+}

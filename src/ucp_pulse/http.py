@@ -60,7 +60,7 @@ class Client:
 
     def get(self, url, query=None):
         origin = allowed(url)
-        if self.stopped:
+        if self.stopped and origin.hostname == "api.github.com":
             raise RateLimited("GitHub remaining below 100; collection stopped")
         data = None
         if query is not None:

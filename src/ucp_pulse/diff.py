@@ -1,5 +1,6 @@
 """Structural alerts only. No compatibility judgments."""
 import posixpath
+from ucp_pulse.util import canonical, digest
 from urllib.parse import unquote, urlsplit
 
 
@@ -55,6 +56,18 @@ def dependents(documents, changed):
     return sorted(seen)
 
 
+def fragment(document, pointer):
+    value = document
+    try:
+        for component in pointer.split("/")[1:]:
+            key = component.replace("~1", "/").replace("~0", "~")
+            value = value[int(key)] if isinstance(value, list) else value[key]
+    except (KeyError, IndexError, TypeError, ValueError):
+        return {"present": False}
+    encoded = canonical(value)
+    return {"present": True, "digest": digest(value), "json_fragment": encoded[:1000], "truncated": len(encoded) > 1000}
+
+
 def alerts(before, after):
     result = []
     for name in sorted(before.keys() | after.keys()):
@@ -62,6 +75,7 @@ def alerts(before, after):
         if not changes:
             continue
         result.append({"file": name, "classification": "unknown", "pointers": changes,
+                       "fragments": [{"pointer": p, "before": fragment(before.get(name), p) if name in before else {"present": False}, "after": fragment(after.get(name), p) if name in after else {"present": False}} for p in changes],
                        "annotations": sorted({key for p in changes for key in ("ucp_request", "ucp_response") if key in p.split("/")}),
                        "dependents": sorted(set(dependents(before, name)) | set(dependents(after, name)))})
     return result

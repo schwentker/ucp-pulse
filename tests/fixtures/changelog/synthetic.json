@@ -1,0 +1,160 @@
+{
+  "origin": "synthetic",
+  "note": "Hand-labeled adversarial cases; dates, IDs, paths and content are synthetic, not upstream claims.",
+  "cases": [
+    {
+      "case": "phrase",
+      "title": "Universal Commerce Protocol launch",
+      "body": "",
+      "url": "https://shopify.dev/changelog/test",
+      "accept": true
+    },
+    {
+      "case": "phrase_body",
+      "title": "Test",
+      "body": "Universal Commerce Protocol",
+      "url": "https://shopify.dev/changelog/test",
+      "accept": true
+    },
+    {
+      "case": "capability",
+      "title": "dev.ucp.shopping.test",
+      "body": "",
+      "url": "https://shopify.dev/changelog/test",
+      "accept": true
+    },
+    {
+      "case": "near_url",
+      "title": "UCP at https://ucp.dev/test",
+      "body": "",
+      "url": "https://shopify.dev/changelog/test",
+      "accept": true
+    },
+    {
+      "case": "reverse_url",
+      "title": "https://ucp.dev/test for UCP",
+      "body": "",
+      "url": "https://shopify.dev/changelog/test",
+      "accept": true
+    },
+    {
+      "case": "bare",
+      "title": "UCP",
+      "body": "",
+      "url": "https://shopify.dev/changelog/test",
+      "accept": false
+    },
+    {
+      "case": "collision",
+      "title": "UCPC",
+      "body": "",
+      "url": "https://shopify.dev/changelog/test",
+      "accept": false
+    },
+    {
+      "case": "collision_suffix",
+      "title": "myUCP",
+      "body": "",
+      "url": "https://shopify.dev/changelog/test",
+      "accept": false
+    },
+    {
+      "case": "generic",
+      "title": "Shop.dev catalog",
+      "body": "",
+      "url": "https://shopify.dev/changelog/test",
+      "accept": false
+    },
+    {
+      "case": "unrelated",
+      "title": "Catalog",
+      "body": "https://ucp.dev/",
+      "url": "https://shopify.dev/changelog/test",
+      "accept": false
+    },
+    {
+      "case": "lookalike",
+      "title": "UCP https://ucp.dev.evil.invalid/",
+      "body": "",
+      "url": "https://shopify.dev/changelog/test",
+      "accept": false
+    },
+    {
+      "case": "other_host",
+      "title": "Universal Commerce Protocol",
+      "body": "",
+      "url": "https://example.invalid/test",
+      "accept": false
+    },
+    {
+      "case": "subdomain",
+      "title": "Universal Commerce Protocol",
+      "body": "",
+      "url": "https://evil.shopify.dev/test",
+      "accept": false
+    },
+    {
+      "case": "http",
+      "title": "Universal Commerce Protocol",
+      "body": "",
+      "url": "http://shopify.dev/test",
+      "accept": false
+    },
+    {
+      "case": "lowercase",
+      "title": "ucp https://ucp.dev/test",
+      "body": "",
+      "url": "https://shopify.dev/test",
+      "accept": false
+    },
+    {
+      "case": "far",
+      "title": "UCP xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx https://ucp.dev/",
+      "body": "",
+      "url": "https://shopify.dev/test",
+      "accept": false
+    },
+    {
+      "case": "acronym_expansion",
+      "title": "User Control Panel (UCP)",
+      "body": "",
+      "url": "https://shopify.dev/test",
+      "accept": false
+    },
+    {
+      "case": "missing_date",
+      "title": "Universal Commerce Protocol",
+      "body": "",
+      "url": "https://shopify.dev/test",
+      "accept": true
+    },
+    {
+      "case": "html",
+      "title": "Update",
+      "body": "<p>Universal Commerce Protocol</p>",
+      "url": "https://shopify.dev/test",
+      "accept": true
+    },
+    {
+      "case": "bare_url",
+      "title": "https://ucp.dev/test",
+      "body": "",
+      "url": "https://shopify.dev/test",
+      "accept": false
+    },
+    {
+      "case": "capability_body",
+      "title": "Update",
+      "body": "dev.ucp.test",
+      "url": "https://shopify.dev/test",
+      "accept": true
+    },
+    {
+      "case": "other_product",
+      "title": "Shopify catalog UCP",
+      "body": "",
+      "url": "https://shopify.dev/test",
+      "accept": false
+    }
+  ]
+}
