@@ -8,7 +8,7 @@ FIELDS = {
     "sdk_pr": {"number", "title", "merge_commit_subject", "base", "state", "merged_at", "merge_sha", "labels", "body", "notice_links", "updated_at"},
     "normative_commit": {"sha", "parents", "subject", "files", "changes", "branches"},
     "sdk_tag": {"tag", "scheme", "tag_object", "tag_commit", "published_at", "notes", "assets", "deleted", "draft", "prerelease"},
-    "registry_version": {"package", "version", "repo", "files", "yanked", "deleted", "dist_tags", "published_at"},
+    "registry_version": {"package", "version", "repo", "files", "yanked", "deleted", "dist_tags", "published_at", "binding_ref"},
     "announcement": {"date", "slug", "title", "body", "discussion_urls", "deleted"},
     "governance": {"path", "body", "deleted"},
     "discussion": {"number", "title", "body", "category", "author", "association", "updated_at", "deleted", "announcement_event"},

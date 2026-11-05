@@ -2,6 +2,7 @@
 import json
 import os
 import re
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -48,12 +49,17 @@ class Client:
     def _network(self, url, headers, data):
         request = urllib.request.Request(url, headers=headers, data=data)
         opener = urllib.request.build_opener(NoRedirect())
-        try:
-            response = opener.open(request, timeout=self.timeout)
-        except urllib.error.HTTPError as error:
-            response = error
-        except (OSError, urllib.error.URLError) as error:
-            raise SourceError(type(error).__name__ + ": source connection failed") from None
+        for attempt in range(3):
+            try:
+                response = opener.open(request, timeout=self.timeout)
+                break
+            except urllib.error.HTTPError as error:
+                response = error
+                break
+            except (OSError, urllib.error.URLError) as error:
+                if attempt == 2:
+                    raise SourceError(type(error).__name__ + ": source connection failed after 3 attempts") from None
+                time.sleep(0.25 * (attempt + 1))
         with response:
             body = response.read(self.byte_cap + 1)
             return response.status, {k.lower(): v for k, v in response.headers.items()}, body

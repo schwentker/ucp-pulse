@@ -15,8 +15,13 @@ def candidate(family, subject, payload, facts, evidence, event_time, time_kind, 
         raise ValueError("evidence requires HTTPS URL and immutable ref or digest")
     if len(evidence.get("excerpt", "")) > 400:
         raise ValueError("excerpt too long")
+    normalized = material(family, payload)
+    # The batch writer persists normalized material. Bind evidence to that exact
+    # content, including trimmed prose and sorted fields.
+    evidence = dict(evidence)
+    evidence["snapshot"] = "data/snapshots/" + digest(normalized) + ".json"
     return dict(event_id=event_id(family, subject), family=family, subject=subject,
-                material=material(family, payload), facts=facts, evidence=evidence,
+                material=normalized, facts=facts, evidence=evidence,
                 event_time=stamp(event_time), event_time_kind=time_kind,
                 authority=authority, source=source, norm_version=NORM_VERSION)
 

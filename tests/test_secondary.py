@@ -184,3 +184,21 @@ def test_diff_fragments_bounded_and_missing_distinct_from_null():
     parts={f['pointer']:f for f in rows[0]['fragments']}
     assert parts['/value']['before']['present'] and not parts['/value']['after']['present']
     assert parts['/other']['after']['truncated'] and len(parts['/other']['after']['json_fragment'])==1000
+
+def test_pypi_fallback_requires_description_link_and_pinned_manifest_ref():
+    value={'info':{'name':'ucp-sdk','version':'1.0.0','project_urls':None,
+                   'description':'Source: https://github.com/Universal-Commerce-Protocol/python-sdk.git'},
+           'releases':{'1.0.0':[{'filename':'synthetic.whl','digests':{'sha256':'a'*64},'upload_time_iso_8601':NOW}]}}
+    ref='Universal-Commerce-Protocol/python-sdk@'+'a'*40+':pyproject.toml'
+    with pytest.raises(SourceError): registry('pypi',value,{},NOW)
+    row=registry('pypi',value,{},NOW,binding_ref=ref)[0]
+    assert row['material']['binding_ref']==ref and row['facts']['package_published']
+    value['info']['description']='Source: https://github.com/Universal-Commerce-Protocol/python-sdk.evil.invalid'
+    with pytest.raises(SourceError): registry('pypi',value,{},NOW,binding_ref=ref)
+
+def test_actual_announcement_heading_format_is_dated_and_stable():
+    source='## September 25, 2026: Synthetic capability notice\nBody\n## January 11, 2026: Synthetic launch\nText'
+    rows=announcements(source,'a'*40,{},NOW)
+    assert [r['subject']['date'] for r in rows]==['2026-09-25','2026-01-11']
+    assert [r['event_time_kind'] for r in rows]==['posted','posted']
+    stable(rows)

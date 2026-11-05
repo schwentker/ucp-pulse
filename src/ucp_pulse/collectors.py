@@ -84,6 +84,7 @@ class GitHub:
     def __init__(self, client):
         self.client = client
         self.document_cache = {}
+        self.blob_cache = {}
 
     def url(self, repo, resource):
         return f"https://api.github.com/repos/{repo}/{resource}"
@@ -129,8 +130,10 @@ class GitHub:
         docs = {}
         for entry in tree["tree"]:
             if entry["type"] == "blob" and entry["path"].startswith(("source/schemas/", "source/services/")) and entry["path"].endswith(".json"):
-                blob = self.client.json(self.url(repo, "git/blobs/" + entry["sha"]))
-                docs[entry["path"]] = json.loads(base64.b64decode(blob["content"]))
+                if entry["sha"] not in self.blob_cache:
+                    blob = self.client.json(self.url(repo, "git/blobs/" + entry["sha"]))
+                    self.blob_cache[entry["sha"]] = json.loads(base64.b64decode(blob["content"]))
+                docs[entry["path"]] = self.blob_cache[entry["sha"]]
         self.document_cache[ref] = docs
         return docs
 

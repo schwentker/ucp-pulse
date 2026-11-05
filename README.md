@@ -18,9 +18,9 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -q
 The build used locally available pinned dependencies without package downloads.
 The installation commands above are for a future owner setup.
 
-Start with [build summary](docs/build/BUILD-SUMMARY.md),
+Start with the [build summary](docs/build/BUILD-SUMMARY.md),
+[repair and backfill report](docs/build/REPAIR-AND-BACKFILL-REPORT.md),
 [runbook](docs/RUNBOOK.md), [decisions](docs/DECISIONS.md), and the normative
 [build plan](BUILD-PLAN.md). Both local repositories have no remote configured.
-The local P6 history is partial: GitHub collection stopped below its rate-limit
-threshold, PyPI binding failed, and Discussions is disabled. The private history
-draft has 21 PENDING evidence revisions and is not publishable.
+The local r2 history review draft has 860 PENDING evidence items and is not
+publishable until a human curates and approves its claims.

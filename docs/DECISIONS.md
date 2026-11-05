@@ -74,3 +74,31 @@ homepage or an inferred repository. S8/S10 succeeded independently. The local
 history preview contains only these 21 collected revisions, all PENDING. Prior
 review fixtures are not substituted for a successful live history backfill.
 The feed is a current snapshot, not a guaranteed historical archive.
+
+## D019: Normalize before naming snapshots
+The original candidate helper hashed pre-normalized material while the batch
+writer saved normalized material. This produced 501 broken pointers across PR,
+SDK tag and governance families. The corrected helper hashes the normalized
+material. The one-time repair tool requires each replacement snapshot to
+already exist with content exactly equal to the stored material. Its private
+mapping records every old and new pointer; the prior Git commit remains the
+audit trail. No event identity, material, facts or times were changed.
+
+## D020: Official provenance fallback for PyPI
+The live ucp-sdk PyPI JSON has project_urls=null. Its public description links
+to the exact official python-sdk repository, whose pinned pyproject.toml declares
+project.name=ucp-sdk. When project URLs are absent, both facts are required and
+the repository commit and path are stored as binding_ref. A lookalike URL or a
+manifest mismatch fails closed. This is a documented departure from the plan's
+project-URLs-only rule, and does not infer package publication from SDK tags.
+
+## D021: Normative recovery through official public Git
+Repeated REST S3 scans hit connection failures before pagination completed.
+The public Git read path was explicitly allowed. A full clone at the official
+GitHub URL, pinned at main head 58c7ab92dcf80b3b1fc756d577b0552ec1cd503a,
+provided complete local objects. The fallback enumerates reachable commits on
+main and maintained release branches from 2026-01-11, computes first-parent
+changed paths and the same structural schema alerts. It yielded 195 records.
+S3 is complete in the local data store. The ordinary REST collector remains for
+scheduled runs; its transport now retries transient connection failures three
+times, and its schema reader reuses unchanged blobs by hash.

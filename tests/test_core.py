@@ -139,3 +139,10 @@ def test_jsonl_tampering_rejected(tmp_path):
     path.write_text(canonical(row) + "\n")
     with pytest.raises(ValueError):
         store.rebuild(check=True)
+
+def test_normalized_snapshot_pointer_matches_persisted_material():
+    from ucp_pulse.model import candidate
+    from ucp_pulse.util import digest
+    evidence={'url':'https://github.com/example/repo','ref':'example/repo@'+'a'*40,'snapshot':'data/snapshots/'+'0'*64+'.json','excerpt':''}
+    item=candidate('governance',{'path':'GOVERNANCE.md'}, {'path':'GOVERNANCE.md','body':'  rules\r\n','deleted':False}, {'deleted':False},evidence,'2020-01-01T00:00:00Z','observed','official_repo','S5')
+    assert item['evidence']['snapshot']=='data/snapshots/'+digest(item['material'])+'.json'

@@ -1,8 +1,10 @@
 """S4-S8 and S10 collectors. Normalization functions are independently testable."""
 import re
+import tomllib
 import xml.etree.ElementTree as ET
 from email.utils import parsedate_to_datetime
 from urllib.parse import urlsplit
+from datetime import datetime
 from ucp_pulse.collectors import ORG, SPEC, evidence
 from ucp_pulse.http import SourceError
 from ucp_pulse.model import candidate
@@ -19,15 +21,17 @@ def batch(source, items):
 
 def announcements(text, ref, previous, observed):
     # A dated heading starts an entry; subordinate undated headings stay inside it.
-    headings = list(re.finditer(r'^#{1,6}\s+([^\n]*\b\d{4}-\d{2}-\d{2}\b[^\n]*)$', text, re.M))
+    headings = list(re.finditer(r'^#{1,6}\s+([^\n]*(?:\b\d{4}-\d{2}-\d{2}\b|\b[A-Z][a-z]+ +\d{1,2}, +\d{4}\b)[^\n]*)$', text, re.M))
     if text.strip() and not headings:
         raise SourceError('announcements has no recognized dated headings')
     items = []
     for index, match in enumerate(headings):
         title = match[1].strip()
-        date = re.search(r'\d{4}-\d{2}-\d{2}', title)[0]
+        iso = re.search(r'\d{4}-\d{2}-\d{2}', title)
+        written = iso[0] if iso else re.search(r'[A-Z][a-z]+ +\d{1,2}, +\d{4}', title)[0]
+        date = written if iso else datetime.strptime(written, '%B %d, %Y').date().isoformat()
         stamp(date + 'T00:00:00Z')
-        slug = re.sub(r'[^a-z0-9]+', '-', title.replace(date, '').lower()).strip('-') or 'notice'
+        slug = re.sub(r'[^a-z0-9]+', '-', title.replace(written, '').lower()).strip('-') or 'notice'
         body = text[match.end():headings[index + 1].start() if index + 1 < len(headings) else len(text)].strip()
         payload = {'date': date, 'slug': slug, 'title': title, 'body': body, 'deleted': False,
                    'discussion_urls': sorted(set(re.findall(r'https://github\.com/Universal-Commerce-Protocol/ucp/discussions/\d+', body)))}
@@ -99,14 +103,19 @@ def bound(url, repo):
     return p.scheme in {'https', 'git'} and p.hostname == 'github.com' and not p.username and p.path.rstrip('/').removesuffix('.git').lower() == '/' + repo.lower()
 
 
-def registry(registry_name, value, previous, observed):
+def registry(registry_name, value, previous, observed, binding_ref=None):
     is_pypi = registry_name == 'pypi'
     if registry_name not in {'pypi', 'npm'}:
         raise ValueError('unknown registry')
     package = 'ucp-sdk' if is_pypi else '@ucp-js/sdk'
     repo = ORG + ('/python-sdk' if is_pypi else '/js-sdk')
     if is_pypi:
-        urls = (value.get('info', {}).get('project_urls') or {}).values()
+        info = value.get('info', {})
+        urls = (info.get('project_urls') or {}).values()
+        if not info.get('project_urls') and binding_ref:
+            # Explicit source link in the PyPI description plus the official
+            # repository's pinned package manifest are both required.
+            urls = re.findall(r'https://github\.com/Universal-Commerce-Protocol/python-sdk(?:\.git)?(?=[\s)\]\"<>]|$)', info.get('description') or '')
         correct_name = value.get('info', {}).get('name') == package
         versions = value.get('releases', {})
         tags = {'latest': value.get('info', {}).get('version')}
@@ -153,6 +162,8 @@ def registry(registry_name, value, previous, observed):
             files, published, yanked, deleted = old.get('files', []), old.get('published_at'), old.get('yanked', False), True
         payload = {'package': package, 'version': version, 'repo': repo, 'files': files, 'published_at': published,
                    'yanked': yanked, 'deleted': deleted, 'dist_tags': sorted(t for t, v in tags.items() if v == version)}
+        if binding_ref and is_pypi:
+            payload['binding_ref'] = binding_ref
         url = f'https://pypi.org/pypi/{package}/{version}/json' if is_pypi else 'https://registry.npmjs.org/@ucp-js%2fsdk/' + version
         items.append(candidate('registry_version', {'registry': registry_name, 'package': package, 'version': version}, payload,
                                {'package_published': present and not deleted, 'yanked': yanked, 'deleted': deleted},
@@ -227,7 +238,16 @@ class Secondary:
         return batch('S6', items)
 
     def s7(self, previous, observed):
-        return batch('S7', registry('pypi', self.client.json('https://pypi.org/pypi/ucp-sdk/json'), previous, observed))
+        value = self.client.json('https://pypi.org/pypi/ucp-sdk/json')
+        binding_ref = None
+        if not value.get('info', {}).get('project_urls'):
+            repo = ORG + '/python-sdk'
+            head = self.github.head(repo)
+            manifest = tomllib.loads(self.github.file(repo, 'pyproject.toml', head))
+            if manifest.get('project', {}).get('name') != 'ucp-sdk':
+                raise SourceError('official Python SDK manifest package identity mismatch')
+            binding_ref = repo + '@' + head + ':pyproject.toml'
+        return batch('S7', registry('pypi', value, previous, observed, binding_ref=binding_ref))
 
     def s8(self, previous, observed):
         return batch('S8', registry('npm', self.client.json('https://registry.npmjs.org/@ucp-js%2fsdk'), previous, observed))
