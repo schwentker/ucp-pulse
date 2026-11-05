@@ -1,5 +1,6 @@
 """Immutable evidence candidates and revisions."""
 from urllib.parse import urlsplit
+from copy import deepcopy
 from ucp_pulse.families import NORM_VERSION, event_id, material, revision_id
 from ucp_pulse.util import digest, stamp
 
@@ -21,7 +22,7 @@ def candidate(family, subject, payload, facts, evidence, event_time, time_kind, 
 
 
 def revise(item, previous, observed_at, run_id):
-    item = dict(item)
+    item = deepcopy(item)
     if previous and previous["material"] == item["material"]:
         # Facts must be deterministic from material. Reject silent reclassification.
         if previous["facts"] != item["facts"]:

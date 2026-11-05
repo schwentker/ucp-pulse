@@ -30,3 +30,21 @@ Unknown SDK tag formats remain verbatim with scheme unknown.
 Structural alerts include bounded 1,000-character JSON fragments and full-value
 hashes, including explicit absent markers. GitHub's rate stop blocks further
 GitHub reads in the same client, while independent registry/feed sources continue.
+
+## D014: Exact revision curation and draft preview
+Curation keys and claim citations use `event_id@revision_id`. The curation file
+also pins the evidence commit, UTC as_of and full period metadata. Every revision
+in the discovery window plus mandatory current inventory needs an explicit
+KEEP/CUT/PENDING decision. Repeated observations of identical content share a
+content revision. The draft preview may display pending evidence, labeled as
+unapproved. `verify --draft` checks structure only; `verify` rejects every PENDING
+item. Human text and analyst fields require KEEP even in a draft preview. No
+export path may use draft validation. This resolves the P6 dry-run requirement.
+
+## D015: Unknowns and inventory presentation
+Render every current spec release line and SDK/registry version separately,
+without inferred availability or arbitrary top-N cuts. An exact main-ahead count
+is unknown until a complete ancestry scan exists; do not infer it from a partial
+normative commit window. Sources with no successful observation are stale/unknown.
+Evidence snapshots, derived state and source health come from the pinned Git
+commit. Render code has no clock or network dependencies.
