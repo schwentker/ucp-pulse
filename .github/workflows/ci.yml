@@ -1,0 +1,30 @@
+name: Engine and exports
+'on':
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+  workflow_dispatch: {}
+permissions: {}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+    - run: 'python3.12 -m venv .venv
+
+        .venv/bin/python -m pip install --requirement requirements-dev.txt'
+    - run: '.venv/bin/python -m pytest -q
+
+        .venv/bin/python -m ucp_pulse check-export --public .'

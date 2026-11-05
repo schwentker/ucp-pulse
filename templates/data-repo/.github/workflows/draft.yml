@@ -1,0 +1,68 @@
+name: Draft
+'on':
+  schedule:
+  - cron: 0 18 * * 0
+  workflow_dispatch:
+    inputs:
+      revise:
+        description: Optional period id for a new addendum revision
+        type: string
+        required: false
+permissions: {}
+concurrency:
+  group: ucp-pulse-state
+  cancel-in-progress: false
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      PYTHONPATH: ${{ github.workspace }}/engine/src
+      GH_TOKEN: ${{ github.token }}
+      GITHUB_TOKEN: ${{ github.token }}
+      DATA_REPO: ${{ github.repository }}
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      with:
+        path: data
+        fetch-depth: 0
+        persist-credentials: false
+    - name: Validate engine pin
+      id: pin
+      shell: bash
+      run: 'set -euo pipefail
+
+        sha=$(cat data/config/engine.lock)
+
+        [[ "$sha" =~ ^[0-9a-f]{40}$ ]]
+
+        printf "sha=%s\n" "$sha" >> "$GITHUB_OUTPUT"'
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      with:
+        repository: schwentker/ucp-pulse
+        ref: ${{ steps.pin.outputs.sha }}
+        path: engine
+        persist-credentials: false
+    - name: Python dependencies
+      run: 'python3.12 -m venv .venv
+
+        .venv/bin/python -m pip install --requirement engine/requirements-dev.txt'
+    - name: Git identity
+      run: 'git -C data config user.name "github-actions[bot]"
+
+        git -C data config user.email "41898282+github-actions[bot]@users.noreply.github.com"'
+    - name: Private Git authentication
+      run: gh auth setup-git --hostname github.com
+    - name: Draft or revise
+      env:
+        REVISE: ${{ inputs.revise }}
+      run: 'args=()
+
+        if [ -n "$REVISE" ]; then args+=(--revise "$REVISE"); fi
+
+        .venv/bin/python -m ucp_pulse draft-due --data data --repo "$DATA_REPO" --publish
+        "${args[@]}"'
+      shell: bash

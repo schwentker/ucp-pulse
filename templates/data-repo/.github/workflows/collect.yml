@@ -1,0 +1,84 @@
+name: Collect
+'on':
+  schedule:
+  - cron: 0 14 * * *
+  workflow_dispatch: {}
+permissions: {}
+concurrency:
+  group: ucp-pulse-state
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    env: &id001
+      PYTHONPATH: ${{ github.workspace }}/engine/src
+      GH_TOKEN: ${{ github.token }}
+      GITHUB_TOKEN: ${{ github.token }}
+      DATA_REPO: ${{ github.repository }}
+    steps:
+    - &id002
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      with:
+        path: data
+        fetch-depth: 0
+        persist-credentials: false
+    - &id003
+      name: Validate engine pin
+      id: pin
+      shell: bash
+      run: 'set -euo pipefail
+
+        sha=$(cat data/config/engine.lock)
+
+        [[ "$sha" =~ ^[0-9a-f]{40}$ ]]
+
+        printf "sha=%s\n" "$sha" >> "$GITHUB_OUTPUT"'
+    - &id004
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      with:
+        repository: schwentker/ucp-pulse
+        ref: ${{ steps.pin.outputs.sha }}
+        path: engine
+        persist-credentials: false
+    - &id005
+      name: Python dependencies
+      run: 'python3.12 -m venv .venv
+
+        .venv/bin/python -m pip install --requirement engine/requirements-dev.txt'
+    - &id006
+      name: Git identity
+      run: 'git -C data config user.name "github-actions[bot]"
+
+        git -C data config user.email "41898282+github-actions[bot]@users.noreply.github.com"'
+    - &id007
+      name: Private Git authentication
+      run: gh auth setup-git --hostname github.com
+    - name: Read enabled sources and commit atomically
+      env:
+        CACHE: ${{ runner.temp }}/ucp-candidates.json
+        RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+      run: '.venv/bin/python -m ucp_pulse smoke-collect --data data --start 2026-01-11T00:00:00Z
+        --cache "$CACHE" --run-id "$RUN_ID"
+
+        .venv/bin/python -m ucp_pulse apply-cached --data data --cache "$CACHE" --push'
+  draft_due:
+    needs: collect
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    env: *id001
+    steps:
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id007
+    - name: Reconcile and draft every due period
+      run: .venv/bin/python -m ucp_pulse draft-due --data data --repo "$DATA_REPO"
+        --publish

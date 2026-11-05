@@ -1,0 +1,71 @@
+name: Export approved briefs
+'on':
+  push:
+    branches:
+    - main
+    paths:
+    - drafts/**
+    - curation/**
+  workflow_dispatch: {}
+permissions: {}
+concurrency:
+  group: ucp-pulse-export
+  cancel-in-progress: false
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    env:
+      PYTHONPATH: ${{ github.workspace }}/engine/src
+      GH_TOKEN: ${{ github.token }}
+      DATA_REPO: ${{ github.repository }}
+      EXPORT_SHA: ${{ github.sha }}
+      UCP_PULSE_EXPORT_TOKEN: ${{ secrets.UCP_PULSE_EXPORT_TOKEN }}
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      with:
+        path: data
+        fetch-depth: 0
+        persist-credentials: false
+    - name: Validate engine pin
+      id: pin
+      shell: bash
+      run: 'set -euo pipefail
+
+        sha=$(cat data/config/engine.lock)
+
+        [[ "$sha" =~ ^[0-9a-f]{40}$ ]]
+
+        printf "sha=%s\n" "$sha" >> "$GITHUB_OUTPUT"'
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      with:
+        repository: schwentker/ucp-pulse
+        ref: ${{ steps.pin.outputs.sha }}
+        path: engine
+        persist-credentials: false
+    - name: Python dependencies
+      run: 'python3.12 -m venv .venv
+
+        .venv/bin/python -m pip install --requirement engine/requirements-dev.txt'
+    - name: Git identity
+      run: 'git -C data config user.name "github-actions[bot]"
+
+        git -C data config user.email "41898282+github-actions[bot]@users.noreply.github.com"'
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      with:
+        repository: schwentker/ucp-pulse
+        path: public
+        fetch-depth: 0
+        persist-credentials: false
+        token: ${{ secrets.UCP_PULSE_EXPORT_TOKEN }}
+    - name: Public Git identity
+      run: 'git -C public config user.name "github-actions[bot]"
+
+        git -C public config user.email "41898282+github-actions[bot]@users.noreply.github.com"'
+    - name: Verify human merge and prepare export PR
+      run: .venv/bin/python -c 'import os; from ucp_pulse.exporting import publish_approved;
+        publish_approved("data", "public", os.environ["DATA_REPO"], "schwentker/ucp-pulse",
+        os.environ["EXPORT_SHA"])'

@@ -1,0 +1,46 @@
+name: Verify
+'on':
+  pull_request:
+    branches:
+    - main
+  workflow_dispatch: {}
+permissions: {}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    env:
+      PYTHONPATH: ${{ github.workspace }}/engine/src
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      with:
+        path: data
+        fetch-depth: 0
+        persist-credentials: false
+    - name: Validate engine pin
+      id: pin
+      shell: bash
+      run: 'set -euo pipefail
+
+        sha=$(cat data/config/engine.lock)
+
+        [[ "$sha" =~ ^[0-9a-f]{40}$ ]]
+
+        printf "sha=%s\n" "$sha" >> "$GITHUB_OUTPUT"'
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      with:
+        repository: schwentker/ucp-pulse
+        ref: ${{ steps.pin.outputs.sha }}
+        path: engine
+        persist-credentials: false
+    - name: Python dependencies
+      run: 'python3.12 -m venv .venv
+
+        .venv/bin/python -m pip install --requirement engine/requirements-dev.txt'
+    - name: Offline engine tests
+      run: .venv/bin/python -m pytest -q engine/tests
+    - name: Verify approved curation and exact renders
+      run: .venv/bin/python -m ucp_pulse verify-all --data data

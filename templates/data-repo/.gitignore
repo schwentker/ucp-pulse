@@ -1,0 +1,5 @@
+.ucp-lock
+.ucp-txn/
+.cache/
+.venv/
+__pycache__/

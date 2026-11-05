@@ -48,3 +48,20 @@ is unknown until a complete ancestry scan exists; do not infer it from a partial
 normative commit window. Sources with no successful observation are stale/unknown.
 Evidence snapshots, derived state and source health come from the pinned Git
 commit. Render code has no clock or network dependencies.
+
+## D016: Local-only deployment boundary and lifecycle preservation
+Future workflow code contains explicit remote-write commands; none were invoked
+against GitHub during this build. CLI remote-write tests use file-protocol bare
+repos only. Existing bot branches are preserved rather than regenerated in place;
+new evidence uses --revise, as for human edits. This is the safer optional branch
+update behavior. Orphan remote draft branches can recover by creating their PR.
+Private-main ruleset bypass is broader than file paths; the runbook names the risk
+and requires owner setup rather than asserting unavailable path permissions.
+
+## D017: Conflict ordering and workflow budget
+Reapply cached candidates after fetch/reset on rejected pushes, bounded at three
+attempts. If a newer snapshot for that source is already committed, fail and
+request recollection rather than regress inventory/cursors. Local Git tests cover
+ordinary rejection replay, duplicate dispatch and crash recovery. Collection and
+drafting are separate jobs to keep collect at contents:write only. This raises
+the worst scheduled budget above 180 minutes/month; measure usage before enabling.
