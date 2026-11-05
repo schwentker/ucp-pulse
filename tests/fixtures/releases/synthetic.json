@@ -1,0 +1,149 @@
+[
+  {
+    "origin": "synthetic",
+    "name": "lightweight",
+    "expected": {
+      "tagged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "annotated",
+    "expected": {
+      "tagged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "after tag",
+    "expected": {
+      "release_published": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "notes edit",
+    "expected": {
+      "artifact_republished": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "asset digest",
+    "expected": {
+      "artifact_republished": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "asset added",
+    "expected": {
+      "artifact_republished": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "branch backport",
+    "expected": {
+      "amended": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "branch no publication",
+    "expected": {
+      "artifact_republished": false
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "retarget",
+    "expected": {
+      "tag_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "delete tag",
+    "expected": {
+      "deleted_tag": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "delete branch",
+    "expected": {
+      "deleted_branch": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "delete release",
+    "expected": {
+      "deleted_release": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "draft",
+    "expected": {
+      "release_published": false
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "prerelease",
+    "expected": {
+      "release_published": false
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "two releases",
+    "expected": {
+      "count": 2
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "alias collapse",
+    "expected": {
+      "count": 1
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "unchanged",
+    "expected": {
+      "same": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "notes CRLF",
+    "expected": {
+      "same": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "annotation changes",
+    "expected": {
+      "tag_object": "cccccccccccccccccccccccccccccccccccccccc"
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "branch only",
+    "expected": {
+      "tagged": false
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "no publication date",
+    "expected": {
+      "time_kind": "observed"
+    }
+  }
+]

@@ -1,0 +1,521 @@
+[
+  {
+    "origin": "synthetic",
+    "name": "merged ordinary",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat: synthetic",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": []
+    },
+    "merge_subject": "",
+    "expected": {
+      "accepted": true,
+      "breaking": false,
+      "merged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "merged bang",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat!: synthetic",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": []
+    },
+    "merge_subject": "",
+    "expected": {
+      "accepted": true,
+      "breaking": true,
+      "merged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "scoped bang",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "fix(order)!: synthetic",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": []
+    },
+    "merge_subject": "",
+    "expected": {
+      "accepted": true,
+      "breaking": true,
+      "merged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "squash bang",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat: synthetic",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": []
+    },
+    "merge_subject": "feat!: synthetic",
+    "expected": {
+      "accepted": true,
+      "breaking": true,
+      "merged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "label only",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat: synthetic",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": [
+        {
+          "name": "breaking-change"
+        }
+      ]
+    },
+    "merge_subject": "",
+    "expected": {
+      "accepted": true,
+      "breaking": true,
+      "merged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "label upper",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat: synthetic",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": [
+        "BREAKING"
+      ]
+    },
+    "merge_subject": "",
+    "expected": {
+      "accepted": true,
+      "breaking": true,
+      "merged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "open bang",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat!: synthetic",
+      "state": "open",
+      "merged_at": null,
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": []
+    },
+    "merge_subject": "",
+    "expected": {
+      "accepted": true,
+      "breaking": true,
+      "merged": false
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "open ordinary",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat: synthetic",
+      "state": "open",
+      "merged_at": null,
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": []
+    },
+    "merge_subject": "",
+    "expected": {
+      "accepted": false,
+      "breaking": false,
+      "merged": false
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "closed unmerged",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat!: synthetic",
+      "state": "closed",
+      "merged_at": null,
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": []
+    },
+    "merge_subject": "",
+    "expected": {
+      "accepted": false,
+      "breaking": true,
+      "merged": false
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "reopened",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat: synthetic",
+      "state": "open",
+      "merged_at": null,
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": [
+        "breaking"
+      ]
+    },
+    "merge_subject": "",
+    "expected": {
+      "accepted": true,
+      "breaking": true,
+      "merged": false
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "edited title",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat: revised",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": []
+    },
+    "merge_subject": "feat!: synthetic",
+    "expected": {
+      "accepted": true,
+      "breaking": true,
+      "merged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "non-main",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat: synthetic",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "release/2026-01-11"
+      },
+      "labels": []
+    },
+    "merge_subject": "fix!: synthetic",
+    "expected": {
+      "accepted": true,
+      "breaking": true,
+      "merged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "old created",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat: synthetic",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2020-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": []
+    },
+    "merge_subject": "feat!: synthetic",
+    "expected": {
+      "accepted": true,
+      "breaking": true,
+      "merged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "exclamation prose",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "Wow! synthetic",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": []
+    },
+    "merge_subject": "",
+    "expected": {
+      "accepted": true,
+      "breaking": false,
+      "merged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "no colon",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat! synthetic",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": []
+    },
+    "merge_subject": "",
+    "expected": {
+      "accepted": true,
+      "breaking": false,
+      "merged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "body bang only",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat: synthetic",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": [],
+      "body": "feat!: synthetic"
+    },
+    "merge_subject": "",
+    "expected": {
+      "accepted": true,
+      "breaking": false,
+      "merged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "null body",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat: synthetic",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": [],
+      "body": null
+    },
+    "merge_subject": "",
+    "expected": {
+      "accepted": true,
+      "breaking": false,
+      "merged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "empty labels",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat: synthetic",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": []
+    },
+    "merge_subject": "",
+    "expected": {
+      "accepted": true,
+      "breaking": false,
+      "merged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "commit scope",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat: synthetic",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": []
+    },
+    "merge_subject": "fix(core)!: synthetic",
+    "expected": {
+      "accepted": true,
+      "breaking": true,
+      "merged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "label unrelated",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat: synthetic",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": [
+        "not-a-release"
+      ]
+    },
+    "merge_subject": "",
+    "expected": {
+      "accepted": true,
+      "breaking": false,
+      "merged": true
+    }
+  },
+  {
+    "origin": "synthetic",
+    "name": "mixed labels",
+    "repo": "Universal-Commerce-Protocol/ucp",
+    "input": {
+      "number": 1,
+      "title": "feat: synthetic",
+      "state": "closed",
+      "merged_at": "2026-02-01T00:00:00Z",
+      "merge_commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "updated_at": "2026-02-01T00:00:00Z",
+      "created_at": "2025-01-01T00:00:00Z",
+      "base": {
+        "ref": "main"
+      },
+      "labels": [
+        "docs",
+        "breaking-change"
+      ]
+    },
+    "merge_subject": "",
+    "expected": {
+      "accepted": true,
+      "breaking": true,
+      "merged": true
+    }
+  }
+]

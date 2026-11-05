@@ -7,3 +7,6 @@
 - D005: Local writes use a recoverable journal under one file lock; the later git commit/push is the publication transaction. Uncommitted journals are discarded; committed journals roll forward.
 - D006: Curation will pin revision IDs in addition to event IDs. A PENDING draft can pass structural verification but cannot pass publication verification. Human strings and curation metadata are distinct types.
 - D007: Upstream text is kept verbatim in evidence. Authored text contains no em dashes; JSON uses ASCII escaping. Rendering will replace that punctuation without changing stored source snapshots.
+- D008: P2 real regression fixtures reuse selected public metadata retrieved in the preceding review on 2026-11-04. Their recorded retrieval precision is one day; no exact timestamp is invented. Bodies, author/user objects and emails are excluded. All constructed payloads and dates are labeled synthetic.
+- D009: A previously tracked PR is retained when closed without merge or when its breaking label/title is withdrawn. Its facts are updated; it is never marked merged. Untracked ordinary open and closed-unmerged PRs are excluded.
+- D010: Missing GitHub rate-limit headers fail closed. Once remaining drops below 100, no further GitHub request is made in that client session. A failed/partial source does not advance its cursor.

@@ -1,0 +1,278 @@
+[
+  {
+    "origin": "synthetic",
+    "name": "required",
+    "before": {
+      "required": []
+    },
+    "after": {
+      "required": [
+        "x"
+      ]
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "removed",
+    "before": {
+      "properties": {
+        "x": {}
+      }
+    },
+    "after": {
+      "properties": {}
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "type",
+    "before": {
+      "type": "string"
+    },
+    "after": {
+      "type": "number"
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "enum",
+    "before": {
+      "enum": [
+        "a"
+      ]
+    },
+    "after": {
+      "enum": [
+        "a",
+        "b"
+      ]
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "ref",
+    "before": {
+      "$ref": "a.json"
+    },
+    "after": {
+      "$ref": "b.json"
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "defs",
+    "before": {
+      "$defs": {
+        "x": {
+          "type": "string"
+        }
+      }
+    },
+    "after": {
+      "$defs": {
+        "x": {
+          "type": "number"
+        }
+      }
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "allOf",
+    "before": {
+      "allOf": [
+        {}
+      ]
+    },
+    "after": {
+      "allOf": [
+        {
+          "required": [
+            "x"
+          ]
+        }
+      ]
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "anyOf",
+    "before": {
+      "anyOf": [
+        {}
+      ]
+    },
+    "after": {
+      "anyOf": []
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "oneOf",
+    "before": {
+      "oneOf": [
+        {}
+      ]
+    },
+    "after": {
+      "oneOf": [
+        false
+      ]
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "ucp_request",
+    "before": {
+      "properties": {
+        "x": {
+          "ucp_request": "omit"
+        }
+      }
+    },
+    "after": {
+      "properties": {
+        "x": {
+          "ucp_request": "required"
+        }
+      }
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "ucp_response",
+    "before": {
+      "ucp_response": "omit"
+    },
+    "after": {
+      "ucp_response": "required"
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "unknown keyword",
+    "before": {
+      "synthetic": 1
+    },
+    "after": {
+      "synthetic": 2
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "min",
+    "before": {
+      "minimum": 1
+    },
+    "after": {
+      "minimum": 2
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "max",
+    "before": {
+      "maxLength": 3
+    },
+    "after": {
+      "maxLength": 2
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "additional",
+    "before": {
+      "additionalProperties": true
+    },
+    "after": {
+      "additionalProperties": false
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "unevaluated",
+    "before": {},
+    "after": {
+      "unevaluatedProperties": false
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "conditional",
+    "before": {},
+    "after": {
+      "if": {
+        "type": "string"
+      },
+      "then": false
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "array",
+    "before": {
+      "prefixItems": [
+        true
+      ]
+    },
+    "after": {
+      "prefixItems": [
+        false
+      ]
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "boolean",
+    "before": true,
+    "after": false,
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "escaped pointer",
+    "before": {
+      "a/b~c": 1
+    },
+    "after": {
+      "a/b~c": 2
+    },
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "empty moved file",
+    "before": {
+      "$defs": {}
+    },
+    "after": null,
+    "expected": "unknown"
+  },
+  {
+    "origin": "synthetic",
+    "name": "added file",
+    "before": null,
+    "after": {
+      "$id": "synthetic"
+    },
+    "expected": "unknown"
+  }
+]
