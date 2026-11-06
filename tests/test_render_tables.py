@@ -36,6 +36,10 @@ def synthetic_records():
          {'tagged':True,'release_published':True,'amended':True,'artifact_republished':False,'deleted':{'tag':False,'branch':False}}),
         ('sdk_tag',{'repo':SPEC.replace('/ucp','/python-sdk'),'tag':'v1.0.0'},
          {'tag':'v1.0.0','scheme':'semver','tag_commit':'c'*40}, {'tagged':True,'release_published':False}),
+        ('registry_version',{'registry':'pypi','package':'ucp-sdk','version':'1.0.0'},
+         {'version':'1.0.0','published_at':'2020-01-02T00:00:00Z',
+          'binding_ref':'Universal-Commerce-Protocol/python-sdk@'+'a'*40+':pyproject.toml'},
+         {'package_published':True,'deleted':False,'yanked':False}),
         ('registry_version',{'registry':'npm','package':'@ucp-js/sdk','version':'1.0.0'},
          {'version':'1.0.0','published_at':'2020-01-02T00:00:00Z','dist_tags':['latest']},
          {'package_published':True,'deleted':False,'yanked':False}),
@@ -48,7 +52,8 @@ def synthetic_records():
 
 def rendered():
     rows=synthetic_records()
-    return render(rows,{}, {},seed(rows,'a'*40,NOW,PERIOD),draft=True)
+    health={'S3':{'last_success':NOW,'git_recoveries':[{'pinned_head':'b'*40,'observed_at':NOW}]}}
+    return render(rows,health,{},seed(rows,'a'*40,NOW,PERIOD),draft=True)
 
 
 def test_history_golden_and_byte_stability():

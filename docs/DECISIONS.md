@@ -66,7 +66,10 @@ ordinary rejection replay, duplicate dispatch and crash recovery. Collection and
 drafting are separate jobs to keep collect at contents:write only. This raises
 the worst scheduled budget above 180 minutes/month; measure usage before enabling.
 
-## D018: P6 partial backfill, no fallback identity guesses
+## D018: P6 partial backfill, no fallback identity guesses (superseded)
+Superseded for S7 by D020. The failure below records the original backfill only;
+S7 now binds through the description link and pinned official manifest.
+
 The P6 GitHub REST response reported remaining=59. Stop subsequent GitHub reads
 and retain all S1-S6 cursors. PyPI returned project_urls=null for ucp-sdk, so S7
 cannot satisfy the specified binding and records failure. Do not substitute a
@@ -140,3 +143,12 @@ R5 explicitly refines R2's timestamp ordering for the breaking table: UTC day,
 main/other bases before release branches, then event time and event ID. Other
 tables retain strict event-time order. The Base column repeats the explicit base
 fact so backports remain easy to identify. No rows are grouped away or hidden.
+
+## D027: Coverage departures use pinned provenance
+Coverage derives D020 from stored PyPI binding_ref values and D021 from S3
+health.git_recoveries, retaining the original observation time and full pinned
+head. The writer preserves recovery provenance across later REST runs. The
+history migration recovers the omitted metadata from the existing cached S3
+batch, cross-checks all its candidate materials against committed evidence, and
+records a local repair audit. No recollection, source-health timestamp change or
+claim approval is involved. Empty stores do not assert either departure.

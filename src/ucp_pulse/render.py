@@ -204,9 +204,22 @@ def render(records, health, sources, curation, draft=False):
         stale=not last or utc(curation['as_of'])-utc(last)>timedelta(hours=48)
         gap=config.get('reason') if not config.get('enabled') else status.get('last_error') or ('stale' if stale else 'current')
         if last and utc(last)>utc(curation['as_of']): raise ValueError('health is newer than as_of')
-        entry={'source':source,'name':name,'enabled':bool(config.get('enabled')),'last_success':last,'failures':status.get('consecutive_failures',0),'stale':stale,'gap':gap}
+        notes=[]
+        if source=='S7':
+            refs=sorted({r['material']['binding_ref'] for r in inventory.values()
+                         if r['family']=='registry_version' and r['subject'].get('registry')=='pypi' and r['material'].get('binding_ref')})
+            if refs:
+                notes.append('D020: PyPI binding via description link plus pinned manifest: '+', '.join(refs)+'.')
+        if source=='S3':
+            for recovery in status.get('git_recoveries', []):
+                head=recovery['pinned_head']
+                if not re.fullmatch('[0-9a-f]{40}',head) or utc(recovery['observed_at'])>utc(curation['as_of']):
+                    raise ValueError('invalid pinned Git recovery provenance')
+                notes.append('D021: Normative commits recovered from a pinned official Git clone; pinned head '+head+'.')
+        entry={'source':source,'name':name,'enabled':bool(config.get('enabled')),'last_success':last,'failures':status.get('consecutive_failures',0),'stale':stale,'gap':gap,'notes':notes}
         coverage.append(entry)
         lines+=['| '+' | '.join(clean(v) for v in [source+' '+name,last or 'unknown',entry['failures'],gap or 'unknown'])+' |']
+    lines+=['']+['- '+clean(note) for entry in coverage for note in entry['notes']]
     lines+=['','## Source ledger','']
     ledger=[]
     for k in ordered:

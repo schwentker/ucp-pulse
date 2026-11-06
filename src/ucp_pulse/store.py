@@ -6,6 +6,7 @@ All local readers recover a committed journal while holding the same lock.
 import fcntl
 import json
 import os
+import re
 import shutil
 from contextlib import contextmanager
 from pathlib import Path
@@ -144,9 +145,16 @@ class Store:
                     updates[f"data/snapshots/{digest(value)}.json"] = canonical(value) + "\n"
                 cursors[source] = {"last_complete": stamp(observed_at), "cursor": batch.get("cursor"),
                                    "overlap_days": 7, "pagination_complete": True}
-                health[source] = {"last_success": stamp(observed_at), "last_error": None,
+                health[source] = {**old, "last_success": stamp(observed_at), "last_error": None,
                                   "consecutive_failures": 0,
                                   "last_nonzero": stamp(observed_at) if count else old.get("last_nonzero")}
+                if source == 'S3' and batch.get('pinned_head'):
+                    head = batch['pinned_head']
+                    if not re.fullmatch('[0-9a-f]{40}', head):
+                        raise ValueError('Git recovery requires a pinned full commit')
+                    recoveries = {r['pinned_head']: r for r in old.get('git_recoveries', [])}
+                    recoveries.setdefault(head, {'pinned_head': head, 'observed_at': stamp(observed_at)})
+                    health[source]['git_recoveries'] = sorted(recoveries.values(), key=lambda r:(r['observed_at'],r['pinned_head']))
             # Derived revisions do not pretend that S1 performed a new upstream read.
             for eid, item in sorted(releases.items()):
                 if eid in written_releases:
