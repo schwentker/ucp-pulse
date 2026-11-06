@@ -116,12 +116,15 @@ def render(records, health, sources, curation, draft=False):
     def event_time(r):
         kind='observed, not published' if r['event_time_kind']=='observed' else r['event_time_kind']
         return r['event_time']+' ('+kind+')'
-    def rowtext(k):
+    def rowtext(k, show_base=False):
         r=visible[k]; item=choices[k]
         signal='analyst-confirmed: '+item['analyst'] if item['analyst'] else 'author-declared' if r['facts'].get('author_declared_breaking') else 'notice-declared' if r['facts'].get('notice_declared_breaking') else 'unknown'
         review='; pending review' if item['decision']=='PENDING' else ''
         facts=readable_facts(r)
-        return '| '+' | '.join(clean(v) for v in [label(r),r['subject'].get('repo','unknown'),facts,signal+review,', '.join(item['affected']) or 'unknown',item['migration'] or 'unknown',item['deadline'] or 'unknown',event_time(r),r['first_seen_at'],cite(k)])+' |'
+        values=[label(r),r['subject'].get('repo','unknown')]
+        if show_base: values.append(r['material'].get('base') or 'unknown')
+        values += [facts,signal+review,', '.join(item['affected']) or 'unknown',item['migration'] or 'unknown',item['deadline'] or 'unknown',event_time(r),r['first_seen_at'],cite(k)]
+        return '| '+' | '.join(clean(v) for v in values)+' |'
     period=curation['period']; title=f"UCP Pulse, {period['type']} {period['start']} to {period['end']} (UTC)"
     lines=['# '+title,'',f"Evidence commit: {curation['evidence_sha']}; as of {curation['as_of']}.",'']
     if draft: lines+=['Draft for review. Pending evidence is unapproved.','']
@@ -162,8 +165,15 @@ def render(records, health, sources, curation, draft=False):
         if not keys and name not in BLOCKS: continue
         lines+=['## '+name,'']
         if not keys: lines+=['No approved evidence in this block.' if not draft else 'No evidence in this block.','']; continue
-        lines+=['| Change | Repo | Facts | Signal | Affected | Migration | Deadline | Event time (kind) | First seen | Evidence |','| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |']
-        lines += [rowtext(k) for k in keys]
+        show_base=name=='Breaking and pending-breaking'
+        if show_base:
+            # R5 groups same-day backports after main, then preserves time/identity order.
+            keys=sorted(keys,key=lambda k:(utc(visible[k]['event_time']).date(),
+                        (visible[k]['material'].get('base') or '').startswith('release/'),
+                        utc(visible[k]['event_time']),visible[k]['event_id'],k))
+        columns=['Change','Repo']+(['Base'] if show_base else [])+['Facts','Signal','Affected','Migration','Deadline','Event time (kind)','First seen','Evidence']
+        lines+=['| '+' | '.join(columns)+' |','| '+' | '.join('---' for _ in columns)+' |']
+        lines += [rowtext(k, show_base) for k in keys]
         for k in keys:
             r=visible[k]
             if name=='Late arrivals': lines+=['',f"{cite(k)} Original time: {r['event_time']} ({r['event_time_kind']})."]

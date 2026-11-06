@@ -31,10 +31,10 @@ Main ahead on normative paths: unknown (no complete ancestry count).
 
 ## Breaking and pending-breaking
 
-| Change | Repo | Facts | Signal | Affected | Migration | Deadline | Event time (kind) | First seen | Evidence |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| feat!: synthetic change 1 | Universal-Commerce-Protocol/ucp | author-declared breaking; merged; base main | author-declared; pending review | unknown | unknown | unknown | 2020-01-02T00:00:00.000000Z (merged) | 2020-02-10T00:00:00.000000Z | [S10] |
-| feat!: synthetic change 2 | Universal-Commerce-Protocol/ucp | author-declared breaking; merged; base main | author-declared; pending review | unknown | unknown | unknown | 2020-01-02T00:00:00.000000Z (merged) | 2020-02-10T00:00:00.000000Z | [S11] |
+| Change | Repo | Base | Facts | Signal | Affected | Migration | Deadline | Event time (kind) | First seen | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| feat!: synthetic change 1 | Universal-Commerce-Protocol/ucp | main | author-declared breaking; merged; base main | author-declared; pending review | unknown | unknown | unknown | 2020-01-02T00:00:00.000000Z (merged) | 2020-02-10T00:00:00.000000Z | [S10] |
+| feat!: synthetic change 2 | Universal-Commerce-Protocol/ucp | main | author-declared breaking; merged; base main | author-declared; pending review | unknown | unknown | unknown | 2020-01-02T00:00:00.000000Z (merged) | 2020-02-10T00:00:00.000000Z | [S11] |
 
 ## Release amendments
 

@@ -98,3 +98,26 @@ def test_only_true_nested_deletion_facts_are_named():
     from ucp_pulse.render import readable_facts
     row={'family':'spec_release','material':{},'facts':{'deleted':{'tag':True,'release':False},'amended':False}}
     assert readable_facts(row)=='deleted tag'
+
+
+def test_breaking_base_and_same_day_backports_after_main_without_losing_rows():
+    rows=[r for r in synthetic_records() if r['family']=='spec_pr']
+    for row in rows:
+        row['material']['base']='release/2020-01-01' if row['subject']['number']==2 else 'main'
+        row['event_time']='2020-01-02T09:00:00.000000Z' if row['subject']['number']==2 else '2020-01-02T10:00:00.000000Z'
+    prior={**rows[0],'event_id':'ucp:pr:3','subject':{**rows[0]['subject'],'number':3},
+           'material':{**rows[0]['material'],'title':'feat!: synthetic previous-day backport','base':'release/2020-01-01'},
+           'event_time':'2020-01-01T09:00:00.000000Z'}
+    tied={**rows[1],'event_id':'ucp:pr:4','subject':{**rows[1]['subject'],'number':4},
+          'material':{**rows[1]['material'],'title':'feat!: synthetic tied main','base':'main'},
+          'event_time':'2020-01-02T10:00:00.000000Z'}
+    rows=[revise(r,None,NOW,'synthetic') for r in [tied,*rows,prior]]
+    md,js=render(rows,{},{},seed(rows,'a'*40,NOW,PERIOD),draft=True)
+    block=md.split('## Breaking and pending-breaking')[1].split('## Release amendments')[0]
+    assert '| Change | Repo | Base |' in block
+    citations={r['citation']:r['key'].split('@')[0] for r in json.loads(js)['source_ledger']}
+    lines=[l for l in block.splitlines() if l.startswith('| feat!:')]
+    ids=[citations[l.split('|')[-2].strip().strip('[]')] for l in lines]
+    assert ids==['ucp:pr:3','ucp:pr:1','ucp:pr:4','ucp:pr:2']
+    assert len(lines)==len(rows)==4
+    assert sum('| release/2020-01-01 |' in line for line in lines)==2

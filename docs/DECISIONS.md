@@ -134,3 +134,9 @@ explicitly incomplete cursors use the initial bound; legacy last_complete-only
 cursors remain supported. Stop updated-descending PR pagination at the overlap
 boundary, including boundary ties. Move the workflow's initial bound to
 config/collection.yaml. Snapshot endpoints still need their full current state.
+
+## D026: Breaking-table backport grouping
+R5 explicitly refines R2's timestamp ordering for the breaking table: UTC day,
+main/other bases before release branches, then event time and event ID. Other
+tables retain strict event-time order. The Base column repeats the explicit base
+fact so backports remain easy to identify. No rows are grouped away or hidden.
