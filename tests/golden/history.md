@@ -20,7 +20,7 @@ No curated statement.
 
 | Component | Version or tag | Tag commit (short) | Published | Amended | Notes | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| Spec release lines | v2020-01-01 | aaaaaaaaaaaa | 2020-01-01T00:00:00Z | yes | release published; tagged; branch bbbbbbbbbbbb; pending review | [S4] |
+| Spec release lines | v2020-01-01 | aaaaaaaaaaaa | 2020-01-01T00:00:00Z | spec | branch differs from tag; release published; tagged; branch bbbbbbbbbbbb; pending review; scope evidence [S10] | [S4] |
 | js-sdk | unknown | unknown | unknown | unknown | none recorded | |
 | python-sdk | v1.0.0 | cccccccccccc | unknown | unknown | tagged; scheme semver; pending review | [S14] |
 | ucp-schema | unknown | unknown | unknown | unknown | none recorded | |
@@ -40,9 +40,13 @@ Main ahead on normative paths: unknown (no complete ancestry count).
 
 | Change | Repo | Facts | Signal | Affected | Migration | Deadline | Event time (kind) | First seen | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| v2020-01-01 | Universal-Commerce-Protocol/ucp | amended; release published; tagged | unknown; pending review | unknown | unknown | unknown | 2020-01-01T00:00:00.000000Z (published) | 2020-02-10T00:00:00.000000Z | [S4] |
+| v2020-01-01 | Universal-Commerce-Protocol/ucp | amended spec; branch differs from tag; release published; tagged | unknown; pending review | unknown | unknown | unknown | 2020-01-01T00:00:00.000000Z (published) | 2020-02-10T00:00:00.000000Z | [S4] |
 
 [S4] Structural classification: unknown.
+
+### Spec amendments
+
+- v2020-01-01 [S4]: ucp:commit:2222222222222222222222222222222222222222: synthetic normative 2 [S10] (docs/specification/synthetic.md)
 
 ## Normative changes for review
 

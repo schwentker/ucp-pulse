@@ -152,3 +152,18 @@ history migration recovers the omitted metadata from the existing cached S3
 batch, cross-checks all its candidate materials against committed evidence, and
 records a local repair audit. No recollection, source-health timestamp change or
 claim approval is involved. Empty stores do not assert either departure.
+
+## D028: Release amendment scope
+
+Classify path evidence independently of tag and branch position. Normative paths
+take precedence. Docs-only requires a nonempty complete path list restricted to
+documentation, workflows or site assets for every supporting item. Missing paths
+and other paths outside those categories are unknown. Legacy amended remains
+available as a historical fact. It does not establish spec or docs-only scope.
+
+Merged spec release PRs use their changed-file lists, including old rename paths.
+An existing normative commit with the exact merge SHA can prove spec scope
+but its filtered path list cannot prove docs-only scope. Each scoped item pins
+both the event and path evidence revisions. The board requires visible proof.
+Local enrichment can append path evidence from the existing pinned clone
+without advancing source cursors or health.

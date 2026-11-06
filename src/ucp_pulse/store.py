@@ -102,7 +102,7 @@ class Store:
                 self._write({f"state/{key}.json": canonical(value) + "\n" for key, value in derived.items()})
             return equal
 
-    def apply(self, batches, observed_at, run_id, tracking_start=None, fail_before_commit=False):
+    def apply(self, batches, observed_at, run_id, tracking_start=None, fail_before_commit=False, *, reconciled=()):
         with self.locked():
             records = self._records()
             inventory = self.derive(records)["inventory"]
@@ -120,6 +120,15 @@ class Store:
             for batch in batches:
                 if batch.get("complete", False):
                     combined.update({i["event_id"]: i for i in batch.get("items", [])})
+            # Local evidence enrichment shares the transaction without advancing source cursors.
+            for item in reconciled:
+                eid = item['event_id']
+                row = revise(item, inventory.get(eid), observed_at, run_id)
+                if row:
+                    additions.append(row)
+                    inventory[eid] = row
+                    updates[item['evidence']['snapshot']] = canonical(item['material']) + "\n"
+                combined[eid] = item
             releases = {eid: amended_release(row, combined.values(), inventory.get(eid))
                         for eid, row in combined.items() if row['family'] == 'spec_release'}
             written_releases = set()

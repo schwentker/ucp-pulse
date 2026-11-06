@@ -3,8 +3,8 @@ from ucp_pulse.util import digest
 
 NORM_VERSION = 1
 FIELDS = {
-    "spec_release": {"version", "tag", "tag_object", "tag_commit", "branch_head", "published_at", "release_id", "notes", "assets", "draft", "prerelease", "deleted", "changes", "amended", "amended_by", "amendment_reasons", "artifact_republished"},
-    "spec_pr": {"number", "title", "merge_commit_subject", "base", "state", "merged_at", "merge_sha", "labels", "body", "notice_links", "updated_at"},
+    "spec_release": {"version", "tag", "tag_object", "tag_commit", "branch_head", "published_at", "release_id", "notes", "assets", "draft", "prerelease", "deleted", "changes", "amended", "amended_by", "amendment_reasons", "amendment_items", "amended_spec", "amended_docs_only", "branch_differs_from_tag", "tag_at_branch_head", "artifact_republished"},
+    "spec_pr": {"number", "title", "merge_commit_subject", "base", "state", "merged_at", "merge_sha", "labels", "body", "notice_links", "updated_at", "files"},
     "sdk_pr": {"number", "title", "merge_commit_subject", "base", "state", "merged_at", "merge_sha", "labels", "body", "notice_links", "updated_at"},
     "normative_commit": {"sha", "parents", "subject", "files", "changes", "branches"},
     "sdk_tag": {"tag", "scheme", "tag_object", "tag_commit", "published_at", "notes", "assets", "deleted", "draft", "prerelease"},

@@ -1,6 +1,7 @@
 """Golden brief built entirely from labeled synthetic evidence."""
 import json
 from pathlib import Path
+from ucp_pulse.amendments import amended_release
 from ucp_pulse.collectors import SPEC, evidence
 from ucp_pulse.model import candidate, revise
 from ucp_pulse.render import render, seed
@@ -17,7 +18,7 @@ def synthetic_records():
         for family,subject,material,facts,kind in [
             ('spec_pr',{'repo':SPEC,'number':n},{'title':f'feat!: synthetic change {n}','base':'main'},
              {'merged':True,'opened':False,'author_declared_breaking':True},'merged'),
-            ('normative_commit',{'repo':SPEC,'sha':str(n)*40},{'subject':f'synthetic normative {n}','files':['docs/specification/synthetic.md']},
+            ('normative_commit',{'repo':SPEC,'sha':str(n)*40},{'subject':f'synthetic normative {n}','files':['docs/specification/synthetic.md'],'branches':['release/2020-01-01']},
              {'classification':'unknown'},'committed'),
             ('announcement',{'date':date[:10],'slug':f'synthetic-{n}'},{'title':f'Synthetic notice {n}','date':date[:10]},
              {'notice_posted':True,'deleted':False},'posted'),
@@ -46,6 +47,8 @@ def synthetic_records():
     ]:
         c=candidate(family,subject,material,facts,evidence('https://example.invalid/synthetic','synthetic@'+'a'*40,material),
                     material.get('published_at',NOW),'published' if material.get('published_at') else 'observed','official_repo','S1')
+        if family=='spec_release':
+            c=amended_release(c, rows)
         rows.append(revise(c,None,NOW,'synthetic'))
     return rows
 
@@ -91,7 +94,7 @@ def test_named_version_board_and_true_facts_only():
     tables='\n'.join(l for l in md.splitlines() if l.startswith('|'))
     assert '{"' not in tables
     assert '| Component | Version or tag | Tag commit (short) | Published | Amended | Notes | Evidence |' in md
-    assert '| Spec release lines | v2020-01-01 | aaaaaaaaaaaa | 2020-01-01T00:00:00Z | yes |' in md
+    assert '| Spec release lines | v2020-01-01 | aaaaaaaaaaaa | 2020-01-01T00:00:00Z | spec |' in md
     assert '| python-sdk | v1.0.0 | cccccccccccc | unknown | unknown |' in md
     assert 'author-declared breaking; merged; base main' in md
     for absent in ('opened','artifact republished','deleted tag','deleted branch','yanked','available','shipped','{"'):

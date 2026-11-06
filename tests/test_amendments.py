@@ -111,3 +111,37 @@ def test_weekly_amendment_includes_older_supporting_evidence():
     assert key(old) in c['items']
     md,_=render([old,new],{},{},c,draft=True)
     assert 'ucp:pr:431' in md.split('## Release amendments')[1].split('## Normative')[0]
+
+
+def test_path_scope_with_real_april_and_january_merge_commits():
+    from ucp_pulse.amendments import changed_pr_paths
+
+    f, pr = inputs()
+    # April path from the existing normative commit snapshot at the #431 merge SHA.
+    april = changed_pr_paths(pr, ['source/schemas/common/identity_linking.json'])
+    assert release(f, [april])['facts']['amended_spec']
+    assert release(f, [april])['facts']['tag_at_branch_head']
+
+    # #282 merge commit 56bad560fbf7d42cc28a8156152f5da94f2505b9.
+    # Full first-parent path list from the existing D021 pinned clone.
+    from ucp_pulse.model import candidate
+    jan = '2026-01-11'
+    sha = '56bad560fbf7d42cc28a8156152f5da94f2505b9'
+    docs = candidate('spec_pr', {'repo': SPEC, 'number': 282},
+                     {'base': 'release/'+jan, 'merge_sha': sha, 'files': ['docs/stylesheets/custom.css']},
+                     {'merged': True}, {'url': 'https://github.com/'+SPEC+'/pull/282', 'ref': SPEC+'@'+sha},
+                     '2026-03-24T02:39:22.000000Z', 'merged', 'official_repo', 'S2')
+    # Synthetic publication/ref inputs and synthetic additional events.
+    f = {'tag': {'name': 'v'+jan, 'commit': 'a'*40},
+         'release': {'tag_name': 'v'+jan, 'published_at': '2026-01-11T00:00:00Z'},
+         'branch': {'name': 'release/'+jan, 'commit': {'sha': 'b'*40}}}
+    assert release(f, [docs])['facts']['amended_docs_only']
+    assert release(f)['facts']['branch_differs_from_tag']
+    assert not release(f)['facts']['amended_spec']
+    missing = candidate('spec_pr', {'repo': SPEC, 'number': 1}, {'base': 'release/'+jan},
+                        {'merged': True}, docs['evidence'], docs['event_time'], 'merged', 'official_repo', 'S2')
+    unknown = release(f, [docs, missing])
+    assert not unknown['facts']['amended_docs_only']
+    assert unknown['material']['amendment_items'][missing['event_id']]['scope']=='unknown'
+    mixed = release(f, [docs, changed_pr_paths(missing, ['docs/versioning.md'])])
+    assert mixed['facts']['amended_spec'] and not mixed['facts']['amended_docs_only']

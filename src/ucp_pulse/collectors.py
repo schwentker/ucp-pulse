@@ -5,7 +5,7 @@ import re
 from datetime import timedelta
 from urllib.parse import quote
 from ucp_pulse.diff import alerts
-from ucp_pulse.amendments import amended_release
+from ucp_pulse.amendments import amended_release, changed_pr_paths, spec_path
 from ucp_pulse.http import SourceError
 from ucp_pulse.model import candidate
 from ucp_pulse.util import digest, stamp, utc
@@ -167,6 +167,11 @@ class GitHub:
                 commit = self.client.json(self.url(repo, "commits/" + pr["merge_commit_sha"]))
                 subject = commit["commit"]["message"].splitlines()[0]
             item = normalize_pr(repo, pr, subject, observed, tracked=f"{repo.rsplit('/', 1)[-1]}:pr:{pr['number']}" in (previous or {}))
+            if item and repo == SPEC and item['facts']['merged'] and item['material']['base'].startswith('release/'):
+                files = self.client.pages(self.url(repo, f"pulls/{pr['number']}/files?per_page=100"))
+                if len(files) < 3000:
+                    paths = [entry[field] for entry in files for field in ('filename', 'previous_filename') if entry.get(field)]
+                    item = changed_pr_paths(item, paths)
             if item:
                 items.append(item)
         return items
@@ -197,7 +202,7 @@ class GitHub:
                 files.extend(detail.get("files", [])); page += 1
                 if page > 31:
                     raise SourceError("commit file limit reached")
-            paths = sorted({f["filename"] for f in files if f["filename"].startswith(NORMATIVE)})
+            paths = sorted({f["filename"] for f in files if spec_path(f["filename"])})
             if not paths:
                 continue
             first = self.client.json(self.url(SPEC, "commits/" + sha))

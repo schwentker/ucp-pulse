@@ -4,6 +4,7 @@ from datetime import timedelta
 from ucp_pulse.store import Store
 from ucp_pulse.runner import SOURCE_NAMES
 from ucp_pulse.util import canonical, stamp, utc
+from ucp_pulse.amendments import spec_path
 
 FOOTER = 'Experimental. Independent. Not affiliated with or endorsed by Shopify, Google, or UCP governance bodies.'
 BLOCKS = ['Version board', 'Breaking and pending-breaking', 'Release amendments', 'Normative changes for review']
@@ -51,6 +52,14 @@ def scope(records, period, as_of):
     rows.update({key(r):r for r in inventory.values() if r['family'] in {'spec_release','sdk_tag','registry_version'} or r['facts'].get('author_declared_breaking') or r['facts'].get('notice_declared_breaking')})
     dependencies = {eid for r in rows.values() if r['family']=='spec_release' for eid in r['material'].get('amended_by', [])}
     rows.update({key(r):r for r in inventory.values() if r['event_id'] in dependencies})
+    pinned = set()
+    for row in rows.values():
+        if row['family'] != 'spec_release':
+            continue
+        for eid, item in row['material'].get('amendment_items', {}).items():
+            pinned.add(eid + '@' + item['revision'])
+            pinned.add(item['path_event'] + '@' + item['path_revision'])
+    rows.update({key(r):r for r in available if key(r) in pinned})
     return rows, inventory, {key(r) for r in selected}
 
 
@@ -113,6 +122,27 @@ def render(records, health, sources, curation, draft=False):
     def label(r):
         m=r['material']
         return m.get('title') or m.get('subject') or m.get('tag') or m.get('version') or m.get('path') or r['event_id']
+    def support(r):
+        for eid, item in r['material'].get('amendment_items', {}).items():
+            event_key = eid + '@' + item['revision']
+            path_key = item['path_event'] + '@' + item['path_revision']
+            if event_key in visible and path_key in visible:
+                yield item['scope'], event_key, path_key
+
+    def amendment_status(r):
+        facts = r['facts']
+        scopes = [scope for scope, _, _ in support(r)]
+        if facts.get('amended_spec') and 'spec' in scopes:
+            return 'spec'
+        items = r['material'].get('amendment_items', {})
+        if facts.get('amended_docs_only') and items and len(scopes) == len(items):
+            return 'docs only'
+        if facts.get('tag_at_branch_head') and r['material'].get('published_at') and not (items or set(r['material'].get('amended_by', [])) - {r['event_id']}):
+            return 'none'
+        if facts.get('amended') is False and 'amended_spec' not in facts:
+            return 'none'
+        return 'unknown'
+
     def event_time(r):
         kind='observed, not published' if r['event_time_kind']=='observed' else r['event_time_kind']
         return r['event_time']+' ('+kind+')'
@@ -121,6 +151,13 @@ def render(records, health, sources, curation, draft=False):
         signal='analyst-confirmed: '+item['analyst'] if item['analyst'] else 'author-declared' if r['facts'].get('author_declared_breaking') else 'notice-declared' if r['facts'].get('notice_declared_breaking') else 'unknown'
         review='; pending review' if item['decision']=='PENDING' else ''
         facts=readable_facts(r)
+        if r['family']=='spec_release' and 'amended_spec' in r['facts']:
+            shown={name:value for name,value in r['facts'].items()
+                   if name not in {'amended','amended_spec','amended_docs_only'}}
+            status=amendment_status(r)
+            if status in {'spec','docs only'}:
+                shown['amended_'+status.replace(' ','_')]=True
+            facts=readable_facts({**r,'facts':shown})
         values=[label(r),r['subject'].get('repo','unknown')]
         if show_base: values.append(r['material'].get('base') or 'unknown')
         values += [facts,signal+review,', '.join(item['affected']) or 'unknown',item['migration'] or 'unknown',item['deadline'] or 'unknown',event_time(r),r['first_seen_at'],cite(k)]
@@ -140,14 +177,17 @@ def render(records, health, sources, curation, draft=False):
         if not matches: lines+=['| '+component+' | unknown | unknown | unknown | unknown | none recorded | |']; continue
         for k in sorted(matches,key=lambda k:(utc(current[k]['event_time']),current[k]['event_id'],k)):
             r=current[k]; m=r['material']
-            notes=fact_labels({name:value for name,value in r['facts'].items() if name!='amended'})
+            notes=fact_labels({name:value for name,value in r['facts'].items() if name not in {'amended','amended_spec','amended_docs_only'}})
             if m.get('branch_head'): notes.append('branch '+m['branch_head'][:12])
             if m.get('scheme'): notes.append('scheme '+m['scheme'])
             if m.get('dist_tags'): notes.append('registry labels '+', '.join(m['dist_tags']))
             notes.extend(name for name in ('draft','prerelease') if m.get(name) is True)
-            notes.extend(m.get('amendment_reasons', []))
             if choices[k]['decision']=='PENDING': notes.append('pending review')
-            amended='yes' if r['facts'].get('amended') is True else 'no' if r['facts'].get('amended') is False else 'unknown'
+            amended=amendment_status(r)
+            if amended in {'spec', 'docs only'}:
+                _, event_key, path_key = next(item for item in support(r)
+                                               if item[0] == ('spec' if amended == 'spec' else 'docs_site'))
+                notes.append('scope evidence '+cite(event_key)+(cite(path_key) if path_key != event_key else ''))
             values=[component,m.get('tag') or m.get('version') or 'unknown',
                     (m.get('tag_commit') or '')[:12] or 'unknown',m.get('published_at') or 'unknown',
                     amended,'; '.join(notes) or 'none recorded',cite(k)]
@@ -155,7 +195,7 @@ def render(records, health, sources, curation, draft=False):
     lines+=['','Main ahead on normative paths: unknown (no complete ancestry count).','']
     sections={
         'Breaking and pending-breaking':[k for k in ordered if visible[k]['facts'].get('author_declared_breaking') or visible[k]['facts'].get('notice_declared_breaking') or choices[k]['analyst']=='breaking'],
-        'Release amendments':[k for k in ordered if k in selected and visible[k]['family']=='spec_release' and visible[k]['facts'].get('amended')],
+        'Release amendments':[k for k in ordered if k in selected and visible[k]['family']=='spec_release' and (visible[k]['facts'].get('amended') or visible[k]['material'].get('amendment_items'))],
         'Normative changes for review':[k for k in ordered if k in selected and visible[k]['family']=='normative_commit'],
         'Official notices':[k for k in ordered if k in selected and visible[k]['family']=='announcement'],
         'Governance':[k for k in ordered if k in selected and visible[k]['family']=='governance'],
@@ -174,6 +214,9 @@ def render(records, health, sources, curation, draft=False):
         columns=['Change','Repo']+(['Base'] if show_base else [])+['Facts','Signal','Affected','Migration','Deadline','Event time (kind)','First seen','Evidence']
         lines+=['| '+' | '.join(columns)+' |','| '+' | '.join('---' for _ in columns)+' |']
         lines += [rowtext(k, show_base) for k in keys]
+        scoped_groups = {'spec': [], 'docs_site': [], 'unknown': []}
+        scoped_releases = {visible[k]['event_id'] for k in keys
+                           if 'amendment_items' in visible[k]['material']}
         for k in keys:
             r=visible[k]
             if name=='Late arrivals': lines+=['',f"{cite(k)} Original time: {r['event_time']} ({r['event_time_kind']})."]
@@ -183,17 +226,27 @@ def render(records, health, sources, curation, draft=False):
                 for change in r['material'].get('changes',[]):
                     lines+=['- '+clean(canonical({f:change[f] for f in ('file','pointers','annotations','dependents','classification')}))]
             if name=='Release amendments':
-                reasons=r['material'].get('amendment_reasons', [])
-                if reasons: lines+=['Amendment evidence: '+clean('; '.join(reasons))+'.']
-                for eid in r['material'].get('amended_by', []):
-                    if eid==r['event_id']: continue
-                    supporting=[j for j in ordered if visible[j]['event_id']==eid]
-                    if supporting:
-                        j=supporting[-1]
-                        lines+=['- '+clean(eid)+': '+clean(label(visible[j]))+' '+cite(j)]
-                    else:
-                        lines+=['- Supporting evidence excluded by curation.']
+                for scope_name, event_key, path_key in support(r):
+                    item = visible[event_key]
+                    path_citation = ' (paths '+cite(path_key)+')' if path_key != event_key else ''
+                    paths = visible[path_key]['material'].get('files', [])
+                    sample = next((path for path in paths if spec_path(path)), paths[0] if paths else '')
+                    path_text = ' ('+clean(sample)+')' if scope_name != 'unknown' and sample else ''
+                    scoped_groups[scope_name].append(
+                        '- '+clean(label(r))+' '+cite(k)+': '+clean(item['event_id'])+': '
+                        +clean(label(item))+' '+cite(event_key)+path_citation+path_text)
+                if r['event_id'] not in scoped_releases:
+                    for eid in r['material'].get('amended_by', []):
+                        supporting=[j for j in ordered if visible[j]['event_id']==eid and eid!=r['event_id']]
+                        if supporting:
+                            j=supporting[-1]
+                            scoped_groups['unknown'].append('- '+clean(eid)+': '+clean(label(visible[j]))+' '+cite(j))
             if choices[k]['note']: lines+=['',clean(choices[k]['note'])+' '+cite(k)]
+        if name=='Release amendments':
+            for scope_name, heading in [('spec','Spec amendments'), ('docs_site','Docs-only amendments'),
+                                        ('unknown','Amendments with unknown scope')]:
+                if scoped_groups[scope_name]:
+                    lines+=['', '### '+heading, '', *scoped_groups[scope_name]]
         lines+=['']
     coverage=[]
     lines+=['## Coverage','','| Source | Last success | Failures | State / gap |','| --- | --- | --- | --- |']
