@@ -85,19 +85,22 @@ def render(records, health, sources, curation, draft=False):
     rows, inventory, selected = validate(records,curation,publishable=not draft)
     choices=curation['items']
     visible={k:r for k,r in rows.items() if choices[k]['decision']=='KEEP' or draft and choices[k]['decision']=='PENDING'}
-    ordered=sorted(visible,key=lambda k:(visible[k]['event_time'],visible[k]['event_id'],k))
+    ordered=sorted(visible,key=lambda k:(utc(visible[k]['event_time']),visible[k]['event_id'],k))
     numbers={k:'S'+str(i+1) for i,k in enumerate(ordered)}
     def cite(k): return '['+numbers[k]+']'
     def label(r):
         m=r['material']
         return m.get('title') or m.get('subject') or m.get('tag') or m.get('version') or m.get('path') or r['event_id']
+    def event_time(r):
+        kind='observed, not published' if r['event_time_kind']=='observed' else r['event_time_kind']
+        return r['event_time']+' ('+kind+')'
     def rowtext(k):
         r=visible[k]; item=choices[k]
         signal='analyst-confirmed: '+item['analyst'] if item['analyst'] else 'author-declared' if r['facts'].get('author_declared_breaking') else 'notice-declared' if r['facts'].get('notice_declared_breaking') else 'unknown'
         review='; pending review' if item['decision']=='PENDING' else ''
         base=r['material'].get('base')
         facts=canonical({**r['facts'],**({'base':base} if base else {})})
-        return '| '+' | '.join(clean(v) for v in [label(r),r['subject'].get('repo','unknown'),facts,signal+review,', '.join(item['affected']) or 'unknown',item['migration'] or 'unknown',item['deadline'] or 'unknown',r['first_seen_at'],cite(k)])+' |'
+        return '| '+' | '.join(clean(v) for v in [label(r),r['subject'].get('repo','unknown'),facts,signal+review,', '.join(item['affected']) or 'unknown',item['migration'] or 'unknown',item['deadline'] or 'unknown',event_time(r),r['first_seen_at'],cite(k)])+' |'
     period=curation['period']; title=f"UCP Pulse, {period['type']} {period['start']} to {period['end']} (UTC)"
     lines=['# '+title,'',f"Evidence commit: {curation['evidence_sha']}; as of {curation['as_of']}.",'']
     if draft: lines+=['Draft for review. Pending evidence is unapproved.','']
@@ -129,7 +132,7 @@ def render(records, health, sources, curation, draft=False):
         if not keys and name not in BLOCKS: continue
         lines+=['## '+name,'']
         if not keys: lines+=['No approved evidence in this block.' if not draft else 'No evidence in this block.','']; continue
-        lines+=['| Change | Repo | Facts | Signal | Affected | Migration | Deadline | First seen | Evidence |','| --- | --- | --- | --- | --- | --- | --- | --- | --- |']
+        lines+=['| Change | Repo | Facts | Signal | Affected | Migration | Deadline | Event time (kind) | First seen | Evidence |','| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |']
         lines += [rowtext(k) for k in keys]
         for k in keys:
             r=visible[k]

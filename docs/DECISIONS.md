@@ -114,3 +114,9 @@ Offline reconciliation appends derived release revisions without advancing sourc
 health or cursors. Artifact republication still requires changed notes or assets.
 The additional material fields are optional under norm_version 1; old revision
 hashes remain valid and unchanged snapshots are never rewritten.
+
+## D023: Event time and observation time remain separate
+Every discovery table includes Event time (kind) beside First seen, ordered by
+UTC event time and event ID. Undated evidence says observed, not published.
+Notices retain their official date; backfill observation time never replaces it.
+The golden brief uses labeled synthetic facts only.
