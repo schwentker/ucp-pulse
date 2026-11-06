@@ -175,3 +175,10 @@ annotation names, and dependent count. Human classification comes from the
 reviewed curation field. The JSON brief retains the structured evidence as
 stored, including complete pointer and dependent lists. Escape JSON opening
 tokens in Markdown so quoted source text cannot reintroduce literal JSON.
+
+## D030: Current revisions in Release amendments
+
+The Release amendments block intersects the selected period with current
+inventory before rendering. A superseded revision cannot supply a row or its
+supporting details. Historical revisions remain available for curation and
+citation in the rest of the brief.

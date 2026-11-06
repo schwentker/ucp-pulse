@@ -213,7 +213,11 @@ def render(records, health, sources, curation, draft=False):
     lines+=['','Main ahead on normative paths: unknown (no complete ancestry count).','']
     sections={
         'Breaking and pending-breaking':[k for k in ordered if visible[k]['facts'].get('author_declared_breaking') or visible[k]['facts'].get('notice_declared_breaking') or choices[k]['analyst']=='breaking'],
-        'Release amendments':[k for k in ordered if k in selected and visible[k]['family']=='spec_release' and (visible[k]['facts'].get('amended') or visible[k]['material'].get('amendment_items'))],
+        'Release amendments': [
+            k for k in ordered if k in selected and k in current
+            and current[k]['family']=='spec_release'
+            and (current[k]['facts'].get('amended') or current[k]['material'].get('amendment_items'))
+        ],
         'Normative changes for review':[k for k in ordered if k in selected and visible[k]['family']=='normative_commit'],
         'Official notices':[k for k in ordered if k in selected and visible[k]['family']=='announcement'],
         'Governance':[k for k in ordered if k in selected and visible[k]['family']=='governance'],
@@ -233,8 +237,6 @@ def render(records, health, sources, curation, draft=False):
         lines+=['| '+' | '.join(columns)+' |','| '+' | '.join('---' for _ in columns)+' |']
         lines += [rowtext(k, show_base) for k in keys]
         scoped_groups = {'spec': [], 'docs_site': [], 'unknown': []}
-        scoped_releases = {visible[k]['event_id'] for k in keys
-                           if 'amendment_items' in visible[k]['material']}
         for k in keys:
             r=visible[k]
             if name=='Late arrivals': lines+=['',f"{cite(k)} Original time: {r['event_time']} ({r['event_time_kind']})."]
@@ -253,7 +255,7 @@ def render(records, health, sources, curation, draft=False):
                     scoped_groups[scope_name].append(
                         '- '+clean(label(r))+' '+cite(k)+': '+clean(item['event_id'])+': '
                         +clean(label(item))+' '+cite(event_key)+path_citation+path_text)
-                if r['event_id'] not in scoped_releases:
+                if 'amendment_items' not in r['material']:
                     for eid in r['material'].get('amended_by', []):
                         supporting=[j for j in ordered if visible[j]['event_id']==eid and eid!=r['event_id']]
                         if supporting:

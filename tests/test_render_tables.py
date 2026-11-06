@@ -148,3 +148,28 @@ def test_structural_detail_is_bounded_and_json_keeps_full_evidence():
     assert '/field/5' not in md and DETAIL['dependents'][0] not in md
     details = [c for row in json.loads(js)['evidence'] for c in row['material'].get('changes', [])]
     assert details == [DETAIL, DETAIL]
+
+
+def release_amendments_with_superseded_revision():
+    rows = synthetic_records()
+    prior = next(row for row in rows if row['family'] == 'spec_release')
+    updated = {
+        **prior,
+        'material': {**prior['material'], 'tag': 'v2020-01-01-current'},
+    }
+    latest = revise(updated, prior, NOW, 'synthetic-latest')
+    rows.append(latest)
+    md, js = render(rows, {}, {}, seed(rows, 'a'*40, NOW, PERIOD), draft=True)
+    start = md.index('## Release amendments\n')
+    end = md.index('## Normative changes for review\n', start)
+    return md[start:end], js, prior, latest
+
+
+def test_release_amendments_latest_revision_golden():
+    block, js, prior, latest = release_amendments_with_superseded_revision()
+    expected = GOLDEN.with_name('release-amendments-latest.md').read_text()
+    assert block == expected
+    ledger = {entry['key']: entry['citation'] for entry in json.loads(js)['source_ledger']}
+    from ucp_pulse.render import key
+    assert f"[{ledger[key(prior)]}]" not in block
+    assert f"[{ledger[key(latest)]}]" in block
