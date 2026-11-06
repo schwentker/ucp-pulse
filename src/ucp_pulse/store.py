@@ -11,6 +11,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from ucp_pulse.families import revision_id
 from ucp_pulse.model import revise
+from ucp_pulse.amendments import amended_release
 from ucp_pulse.periods import reconcile
 from ucp_pulse.util import canonical, digest, json_file, safe_relative, stamp
 
@@ -114,6 +115,13 @@ class Store:
             health = json_file(self.root / "state/health.json", {})
             updates = {}
             additions = []
+            combined = dict(inventory)
+            for batch in batches:
+                if batch.get("complete", False):
+                    combined.update({i["event_id"]: i for i in batch.get("items", [])})
+            releases = {eid: amended_release(row, combined.values(), inventory.get(eid))
+                        for eid, row in combined.items() if row['family'] == 'spec_release'}
+            written_releases = set()
             for batch in batches:
                 source = batch["source"]
                 old = health.get(source, {})
@@ -123,6 +131,10 @@ class Store:
                     continue
                 count = 0
                 for item in batch.get("items", []):
+                    if item['event_id'] in releases:
+                        item = releases[item['event_id']]
+                        written_releases.add(item['event_id'])
+                        updates[item['evidence']['snapshot']] = canonical(item['material']) + "\n"
                     row = revise(item, inventory.get(item["event_id"]), observed_at, run_id)
                     if row:
                         additions.append(row)
@@ -135,6 +147,14 @@ class Store:
                 health[source] = {"last_success": stamp(observed_at), "last_error": None,
                                   "consecutive_failures": 0,
                                   "last_nonzero": stamp(observed_at) if count else old.get("last_nonzero")}
+            # Derived revisions do not pretend that S1 performed a new upstream read.
+            for eid, item in sorted(releases.items()):
+                if eid in written_releases:
+                    continue
+                row = revise(item, inventory.get(eid), observed_at, run_id)
+                if row:
+                    additions.append(row)
+                    updates[item['evidence']['snapshot']] = canonical(item['material']) + "\n"
             if additions:
                 rel = "data/events/" + stamp(observed_at)[:7] + ".jsonl"
                 path = self.root / rel

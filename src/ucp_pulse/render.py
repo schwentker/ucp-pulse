@@ -27,6 +27,8 @@ def scope(records, period, as_of):
     # Mandatory board/pending state may cite older observations, without losing window revisions.
     rows = {key(r): r for r in selected}
     rows.update({key(r):r for r in inventory.values() if r['family'] in {'spec_release','sdk_tag','registry_version'} or r['facts'].get('author_declared_breaking') or r['facts'].get('notice_declared_breaking')})
+    dependencies = {eid for r in rows.values() if r['family']=='spec_release' for eid in r['material'].get('amended_by', [])}
+    rows.update({key(r):r for r in inventory.values() if r['event_id'] in dependencies})
     return rows, inventory, {key(r) for r in selected}
 
 
@@ -137,6 +139,17 @@ def render(records, health, sources, curation, draft=False):
                 if r['material'].get('files'): lines+=['Files: '+clean(', '.join(r['material']['files']))]
                 for change in r['material'].get('changes',[]):
                     lines+=['- '+clean(canonical({f:change[f] for f in ('file','pointers','annotations','dependents','classification')}))]
+            if name=='Release amendments':
+                reasons=r['material'].get('amendment_reasons', [])
+                if reasons: lines+=['Amendment evidence: '+clean('; '.join(reasons))+'.']
+                for eid in r['material'].get('amended_by', []):
+                    if eid==r['event_id']: continue
+                    supporting=[j for j in ordered if visible[j]['event_id']==eid]
+                    if supporting:
+                        j=supporting[-1]
+                        lines+=['- '+clean(eid)+': '+clean(label(visible[j]))+' '+cite(j)]
+                    else:
+                        lines+=['- Supporting evidence excluded by curation.']
             if choices[k]['note']: lines+=['',clean(choices[k]['note'])+' '+cite(k)]
         lines+=['']
     coverage=[]

@@ -102,3 +102,15 @@ changed paths and the same structural schema alerts. It yielded 195 records.
 S3 is complete in the local data store. The ordinary REST collector remains for
 scheduled runs; its transport now retries transient connection failures three
 times, and its schema reader reuses unchanged blobs by hash.
+
+## D022: First-observation release amendments
+Derive amendments from post-publication merged PRs targeting a release branch,
+normative commits recorded as reachable on that branch, and differing branch/tag
+commits. Retain earlier observation comparisons, including tag retargeting.
+Store amended_by event IDs and reasons in the release material. Ref comparisons
+cite the release itself; related PRs/commits retain their own evidence citations.
+Reconcile after all complete source batches so source order cannot miss a backport.
+Offline reconciliation appends derived release revisions without advancing source
+health or cursors. Artifact republication still requires changed notes or assets.
+The additional material fields are optional under norm_version 1; old revision
+hashes remain valid and unchanged snapshots are never rewritten.

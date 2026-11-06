@@ -1,0 +1,23 @@
+{
+  "origin": "upstream_subset",
+  "source_url": "https://github.com/Universal-Commerce-Protocol/ucp/releases/tag/v2026-04-08",
+  "retrieved_at": "2026-11-05T15:21:35.523115Z",
+  "transform": "Selected public release/ref facts from existing pinned local evidence; notes and assets omitted.",
+  "evidence_commit": "0b55e35a45a684452921770aa376a9c5c62f5e5c",
+  "tag": {
+    "name": "v2026-04-08",
+    "object": "48127e78d89125afee9d507f3d48748e3c66eda8",
+    "commit": "9c9d6fce39ffa8bf7cb66309c378b79fb75b5382"
+  },
+  "release": {
+    "id": 306857801,
+    "tag_name": "v2026-04-08",
+    "published_at": "2026-04-09T01:48:20Z"
+  },
+  "branch": {
+    "name": "release/2026-04-08",
+    "commit": {
+      "sha": "9c9d6fce39ffa8bf7cb66309c378b79fb75b5382"
+    }
+  }
+}
