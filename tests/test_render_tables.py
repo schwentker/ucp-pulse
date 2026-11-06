@@ -79,3 +79,22 @@ def test_all_discovery_tables_show_event_and_observation_separately():
     assert count==6
     notices=md.split('## Official notices')[1].split('## Governance')[0]
     assert '2020-01-01T00:00:00.000000Z (posted)' in notices
+
+
+def test_named_version_board_and_true_facts_only():
+    md,_=rendered()
+    tables='\n'.join(l for l in md.splitlines() if l.startswith('|'))
+    assert '{"' not in tables
+    assert '| Component | Version or tag | Tag commit (short) | Published | Amended | Notes | Evidence |' in md
+    assert '| Spec release lines | v2020-01-01 | aaaaaaaaaaaa | 2020-01-01T00:00:00Z | yes |' in md
+    assert '| python-sdk | v1.0.0 | cccccccccccc | unknown | unknown |' in md
+    assert 'author-declared breaking; merged; base main' in md
+    for absent in ('opened','artifact republished','deleted tag','deleted branch','yanked','available','shipped','{"'):
+        assert absent not in tables
+    assert 'official date 2020-01-01' in md
+
+
+def test_only_true_nested_deletion_facts_are_named():
+    from ucp_pulse.render import readable_facts
+    row={'family':'spec_release','material':{},'facts':{'deleted':{'tag':True,'release':False},'amended':False}}
+    assert readable_facts(row)=='deleted tag'

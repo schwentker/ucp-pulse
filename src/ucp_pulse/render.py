@@ -17,6 +17,28 @@ def clean(value):
     return str(value).replace('\u2014', ' - ').replace('\r','').replace('\n',' ').replace('|', '\\|').replace('<','&lt;').replace('>','&gt;')
 
 
+def fact_labels(facts):
+    labels=[]
+    names={'author_declared_breaking':'author-declared breaking',
+           'notice_declared_breaking':'notice-declared breaking', 'ucp_scoped':'UCP-scoped'}
+    for name,value in facts.items():
+        label=names.get(name,name.replace('_',' '))
+        if value is True:
+            labels.append(label)
+        elif isinstance(value,dict):
+            labels.extend(label+' '+part.replace('_',' ') for part,enabled in sorted(value.items()) if enabled is True)
+    return sorted(labels)
+
+
+def readable_facts(row):
+    labels=fact_labels(row['facts'])
+    base=row['material'].get('base')
+    if base: labels.append('base '+base)
+    if row['family']=='announcement' and row['material'].get('date'):
+        labels.append('official date '+row['material']['date'])
+    return '; '.join(labels) or 'none recorded'
+
+
 def scope(records, period, as_of):
     available = [r for r in records if utc(r['first_seen_at']) <= utc(as_of)]
     inventory = Store.derive(available)['inventory']
@@ -98,8 +120,7 @@ def render(records, health, sources, curation, draft=False):
         r=visible[k]; item=choices[k]
         signal='analyst-confirmed: '+item['analyst'] if item['analyst'] else 'author-declared' if r['facts'].get('author_declared_breaking') else 'notice-declared' if r['facts'].get('notice_declared_breaking') else 'unknown'
         review='; pending review' if item['decision']=='PENDING' else ''
-        base=r['material'].get('base')
-        facts=canonical({**r['facts'],**({'base':base} if base else {})})
+        facts=readable_facts(r)
         return '| '+' | '.join(clean(v) for v in [label(r),r['subject'].get('repo','unknown'),facts,signal+review,', '.join(item['affected']) or 'unknown',item['migration'] or 'unknown',item['deadline'] or 'unknown',event_time(r),r['first_seen_at'],cite(k)])+' |'
     period=curation['period']; title=f"UCP Pulse, {period['type']} {period['start']} to {period['end']} (UTC)"
     lines=['# '+title,'',f"Evidence commit: {curation['evidence_sha']}; as of {curation['as_of']}.",'']
@@ -109,16 +130,25 @@ def render(records, health, sources, curation, draft=False):
         texts=[clean(c['text'])+' '+ ' '.join(cite(k) for k in c['evidence']) for c in claims if c['text'].strip()]
         lines+=texts or ['No curated statement.']; lines+=['']
     current={key(r):r for r in inventory.values() if key(r) in visible}
-    lines+=['## Version board','', '| Component | Observed facts | Evidence |','| --- | --- | --- |']
+    lines+=['## Version board','', '| Component | Version or tag | Tag commit (short) | Published | Amended | Notes | Evidence |','| --- | --- | --- | --- | --- | --- | --- |']
     # Each current release line is mandatory; SDK schemes and registry versions stay separate.
     for component,families,repo in [('Spec release lines',{'spec_release'},None),('js-sdk',{'sdk_tag'},'js-sdk'),('python-sdk',{'sdk_tag'},'python-sdk'),('ucp-schema',{'sdk_tag'},'ucp-schema'),('PyPI',{'registry_version'},'pypi'),('npm',{'registry_version'},'npm')]:
         matches=[k for k,r in current.items() if r['family'] in families and (repo is None or r['subject'].get('repo','').endswith('/'+repo) or r['subject'].get('registry')==repo)]
-        if not matches: lines+=['| '+component+' | unknown | |']; continue
-        for k in sorted(matches,key=lambda k:(current[k]['event_time'],k)):
+        if not matches: lines+=['| '+component+' | unknown | unknown | unknown | unknown | none recorded | |']; continue
+        for k in sorted(matches,key=lambda k:(utc(current[k]['event_time']),current[k]['event_id'],k)):
             r=current[k]; m=r['material']
-            facts={field:m.get(field) for field in ('version','tag','scheme','tag_commit','branch_head','published_at','dist_tags') if field in m}
-            facts.update(r['facts'])
-            lines+=['| '+component+' | '+clean(canonical(facts))+' | '+cite(k)+' |']
+            notes=fact_labels({name:value for name,value in r['facts'].items() if name!='amended'})
+            if m.get('branch_head'): notes.append('branch '+m['branch_head'][:12])
+            if m.get('scheme'): notes.append('scheme '+m['scheme'])
+            if m.get('dist_tags'): notes.append('registry labels '+', '.join(m['dist_tags']))
+            notes.extend(name for name in ('draft','prerelease') if m.get(name) is True)
+            notes.extend(m.get('amendment_reasons', []))
+            if choices[k]['decision']=='PENDING': notes.append('pending review')
+            amended='yes' if r['facts'].get('amended') is True else 'no' if r['facts'].get('amended') is False else 'unknown'
+            values=[component,m.get('tag') or m.get('version') or 'unknown',
+                    (m.get('tag_commit') or '')[:12] or 'unknown',m.get('published_at') or 'unknown',
+                    amended,'; '.join(notes) or 'none recorded',cite(k)]
+            lines+=['| '+' | '.join(clean(v) for v in values)+' |']
     lines+=['','Main ahead on normative paths: unknown (no complete ancestry count).','']
     sections={
         'Breaking and pending-breaking':[k for k in ordered if visible[k]['facts'].get('author_declared_breaking') or visible[k]['facts'].get('notice_declared_breaking') or choices[k]['analyst']=='breaking'],

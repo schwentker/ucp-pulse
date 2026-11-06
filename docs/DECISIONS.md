@@ -120,3 +120,10 @@ Every discovery table includes Event time (kind) beside First seen, ordered by
 UTC event time and event ID. Undated evidence says observed, not published.
 Notices retain their official date; backfill observation time never replaces it.
 The golden brief uses labeled synthetic facts only.
+
+## D024: Readable independent facts
+Table cells list true boolean facts, including individual deletion facts, plus
+explicit base and notice dates. Unknown classification remains in its dedicated
+review text. The board separates version/tag, 12-character commit, publication
+date and amended from short notes. Missing amended facts are unknown, not false.
+Neither the renderer nor this derivation infers availability or shipment.
