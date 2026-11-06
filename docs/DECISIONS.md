@@ -127,3 +127,10 @@ explicit base and notice dates. Unknown classification remains in its dedicated
 review text. The board separates version/tag, 12-character commit, publication
 date and amended from short notes. Missing amended facts are unknown, not false.
 Neither the renderer nor this derivation infers availability or shipment.
+
+## D025: Complete cursors override the initial bound
+Use last_complete minus seven days without clamping to --start. Missing or
+explicitly incomplete cursors use the initial bound; legacy last_complete-only
+cursors remain supported. Stop updated-descending PR pagination at the overlap
+boundary, including boundary ties. Move the workflow's initial bound to
+config/collection.yaml. Snapshot endpoints still need their full current state.

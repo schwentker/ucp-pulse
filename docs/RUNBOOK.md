@@ -126,3 +126,18 @@ Updating the engine: review/test the new engine commit, push it first, then chan
 config/engine.lock in a reviewed private PR to its full 40-character SHA. Workflow
 permissions and checkout pins must remain least privilege. actionlint was not
 available in the local build; run it before first deployment if available.
+
+## Collection bounds after backfill
+
+The workflow reads the initial bound from `config/collection.yaml` (`history_start`)
+instead of embedding it in the daily command. Copy this file with the updated
+collect template when upgrading the private repo. `smoke-collect --start` overrides
+that initial bound only for sources without a complete cursor. A complete source
+always resumes at `last_complete - 7 days`, even if `--start` is later. Failed or
+incomplete pagination keeps the old cursor. Legacy cursors with last_complete but
+no pagination_complete flag still represent complete runs; an explicit false
+flag is not resumable. PR endpoints have no server-side updated-since filter, so
+the collector reads pages sorted by updated descending and stops at the cutoff.
+Commit endpoints send the cutoff as `since`; snapshot sources still read their
+current inventory. To redo history, use a separate local data checkout with the
+relevant cursor removed, retaining the original checkout as the audit trail.

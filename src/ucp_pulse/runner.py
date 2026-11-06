@@ -18,8 +18,9 @@ def collect(client, previous, cursors, config, observed, start):
             raise ValueError('unknown source in config')
         if not entry.get('enabled'):
             continue
-        last = cursors.get(source, {}).get('last_complete')
-        since = stamp(max(utc(start), utc(last) - timedelta(days=7))) if last else stamp(start)
+        cursor = cursors.get(source, {})
+        last = cursor.get('last_complete') if cursor.get('pagination_complete', True) else None
+        since = stamp(utc(last) - timedelta(days=7)) if last else stamp(start)
         try:
             if source == 'S9':
                 raise SourceError('Discussions disabled: live smoke did not pass')

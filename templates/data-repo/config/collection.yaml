@@ -1,0 +1,2 @@
+# Initial bound for sources without a complete cursor. Daily runs resume with overlap.
+history_start: "2026-01-11T00:00:00Z"

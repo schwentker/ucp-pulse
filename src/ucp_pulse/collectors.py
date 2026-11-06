@@ -157,7 +157,7 @@ class GitHub:
 
     def prs(self, repo, since, observed, previous=None):
         # Sort updated, not created. Never stop on an old-created PR.
-        values = self.client.pages(self.url(repo, "pulls?state=all&sort=updated&direction=desc&per_page=100"))
+        values = self.client.pages(self.url(repo, "pulls?state=all&sort=updated&direction=desc&per_page=100"), updated_since=since)
         items = []
         for pr in values:
             if utc(pr["updated_at"]) < utc(since):

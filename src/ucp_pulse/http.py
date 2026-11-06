@@ -7,7 +7,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
-from ucp_pulse.util import canonical, digest, json_file
+from ucp_pulse.util import canonical, digest, json_file, utc
 
 
 class SourceError(RuntimeError):
@@ -132,7 +132,7 @@ class Client:
                 raise RateLimited("GraphQL remaining missing or below 100")
         return value
 
-    def pages(self, url):
+    def pages(self, url, *, updated_since=None):
         values, seen = [], set()
         for _ in range(500):
             if url in seen:
@@ -142,7 +142,15 @@ class Client:
             page = json.loads(body)
             if not isinstance(page, list):
                 raise SourceError("list endpoint returned non-list")
-            values.extend(page)
+            if updated_since is not None:
+                # Only callers of endpoints sorted by updated DESC may set this.
+                cutoff = utc(updated_since)
+                recent = [row for row in page if utc(row['updated_at']) >= cutoff]
+                values.extend(recent)
+                if len(recent) != len(page):
+                    return values
+            else:
+                values.extend(page)
             match = re.search(r'<([^>]+)>;\s*rel="next"', headers.get("link", ""))
             if not match:
                 return values

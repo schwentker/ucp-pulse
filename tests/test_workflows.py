@@ -26,3 +26,11 @@ def test_workflow_static_contract():
     assert private['collect']['jobs']['collect']['permissions']=={'contents':'write'}
     assert private['verify']['jobs']['verify']['permissions']=={'contents':'read'}
     assert 'pull-requests' not in yaml.safe_load((ROOT/'.github/workflows/ci.yml').read_text())['jobs']['verify']['permissions']
+
+
+def test_collect_initial_bound_is_configuration_not_workflow_literal():
+    template=ROOT/'templates/data-repo'
+    workflow=(template/'.github/workflows/collect.yml').read_text()
+    assert 'smoke-collect --data data' in workflow
+    assert '--start' not in workflow and '2026-01-11' not in workflow
+    assert yaml.safe_load((template/'config/collection.yaml').read_text())=={'history_start':'2026-01-11T00:00:00Z'}
