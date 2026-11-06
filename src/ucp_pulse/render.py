@@ -40,6 +40,24 @@ def readable_facts(row):
     return '; '.join(labels) or 'none recorded'
 
 
+def structural_detail(change, analyst):
+    pointers = change['pointers']
+    count = len(pointers)
+    pointer_text = f"{count} changed {'pointer' if count == 1 else 'pointers'}"
+    if pointers:
+        examples = [pointer or '(root)' for pointer in pointers[:5]]
+        if count > 5:
+            examples.append(f'and {count - 5} more')
+        pointer_text += ' (' + ', '.join(examples) + ')'
+    parts = [pointer_text]
+    if change['annotations']:
+        parts.append('request annotations: ' + ', '.join(change['annotations']))
+    dependents = len(change['dependents'])
+    parts.append(f"{dependents} {'dependent' if dependents == 1 else 'dependents'}")
+    parts.append('classification ' + (analyst or 'unknown'))
+    return change['file'] + ': ' + '; '.join(parts)
+
+
 def scope(records, period, as_of):
     available = [r for r in records if utc(r['first_seen_at']) <= utc(as_of)]
     inventory = Store.derive(available)['inventory']
@@ -224,7 +242,7 @@ def render(records, health, sources, curation, draft=False):
                 lines+=['',cite(k)+' Structural classification: '+(choices[k]['analyst'] or 'unknown')+'.']
                 if r['material'].get('files'): lines+=['Files: '+clean(', '.join(r['material']['files']))]
                 for change in r['material'].get('changes',[]):
-                    lines+=['- '+clean(canonical({f:change[f] for f in ('file','pointers','annotations','dependents','classification')}))]
+                    lines+=['- '+clean(structural_detail(change, choices[k]['analyst']))]
             if name=='Release amendments':
                 for scope_name, event_key, path_key in support(r):
                     item = visible[event_key]
@@ -285,4 +303,4 @@ def render(records, health, sources, curation, draft=False):
     lines+=['',FOOTER,'']
     output={'period':period,'evidence_sha':curation['evidence_sha'],'as_of':curation['as_of'],'draft':draft,'coverage':coverage,'source_ledger':ledger,
             'evidence':[{'key':k,'material':visible[k]['material'],'facts':visible[k]['facts'],'curation':choices[k]} for k in ordered]}
-    return '\n'.join(lines), canonical(output)+'\n'
+    return '\n'.join(lines).replace('{"', '&#123;"'), canonical(output)+'\n'

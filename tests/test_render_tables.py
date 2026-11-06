@@ -11,6 +11,15 @@ PERIOD={'id':'history-2020-01-01','type':'history','start':'2020-01-01T00:00:00Z
 GOLDEN=Path(__file__).parent/'golden'/'history.md'
 
 
+DETAIL = {
+    'file': 'source/schemas/synthetic.json',
+    'pointers': [f'/field/{n}' for n in range(7)],
+    'annotations': ['ucp_request'],
+    'dependents': ['source/schemas/synthetic-dependent.json'],
+    'classification': 'unknown',
+}
+
+
 def synthetic_records():
     rows=[]
     for n in (2,1):
@@ -18,7 +27,7 @@ def synthetic_records():
         for family,subject,material,facts,kind in [
             ('spec_pr',{'repo':SPEC,'number':n},{'title':f'feat!: synthetic change {n}','base':'main'},
              {'merged':True,'opened':False,'author_declared_breaking':True},'merged'),
-            ('normative_commit',{'repo':SPEC,'sha':str(n)*40},{'subject':f'synthetic normative {n}','files':['docs/specification/synthetic.md'],'branches':['release/2020-01-01']},
+            ('normative_commit',{'repo':SPEC,'sha':str(n)*40},{'subject':f'synthetic normative {n}','files':['docs/specification/synthetic.md'],'changes':[DETAIL],'branches':['release/2020-01-01']},
              {'classification':'unknown'},'committed'),
             ('announcement',{'date':date[:10],'slug':f'synthetic-{n}'},{'title':f'Synthetic notice {n}','date':date[:10]},
              {'notice_posted':True,'deleted':False},'posted'),
@@ -129,3 +138,13 @@ def test_breaking_base_and_same_day_backports_after_main_without_losing_rows():
     assert ids==['ucp:pr:3','ucp:pr:1','ucp:pr:4','ucp:pr:2']
     assert len(lines)==len(rows)==4
     assert sum('| release/2020-01-01 |' in line for line in lines)==2
+
+
+def test_structural_detail_is_bounded_and_json_keeps_full_evidence():
+    md, js = rendered()
+    assert '{"' not in md
+    assert '7 changed pointers (/field/0, /field/1, /field/2, /field/3, /field/4, and 2 more)' in md
+    assert 'request annotations: ucp_request; 1 dependent; classification unknown' in md
+    assert '/field/5' not in md and DETAIL['dependents'][0] not in md
+    details = [c for row in json.loads(js)['evidence'] for c in row['material'].get('changes', [])]
+    assert details == [DETAIL, DETAIL]

@@ -57,9 +57,11 @@ Main ahead on normative paths: unknown (no complete ancestry count).
 
 [S3] Structural classification: unknown.
 Files: docs/specification/synthetic.md
+- source/schemas/synthetic.json: 7 changed pointers (/field/0, /field/1, /field/2, /field/3, /field/4, and 2 more); request annotations: ucp_request; 1 dependent; classification unknown
 
 [S10] Structural classification: unknown.
 Files: docs/specification/synthetic.md
+- source/schemas/synthetic.json: 7 changed pointers (/field/0, /field/1, /field/2, /field/3, /field/4, and 2 more); request annotations: ucp_request; 1 dependent; classification unknown
 
 ## Official notices
 

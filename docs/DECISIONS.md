@@ -167,3 +167,11 @@ but its filtered path list cannot prove docs-only scope. Each scoped item pins
 both the event and path evidence revisions. The board requires visible proof.
 Local enrichment can append path evidence from the existing pinned clone
 without advancing source cursors or health.
+
+## D029: Structural detail in Markdown
+
+Markdown shows the changed file, pointer count, first five pointer examples,
+annotation names, and dependent count. Human classification comes from the
+reviewed curation field. The JSON brief retains the structured evidence as
+stored, including complete pointer and dependent lists. Escape JSON opening
+tokens in Markdown so quoted source text cannot reintroduce literal JSON.
