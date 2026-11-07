@@ -66,7 +66,10 @@ ordinary rejection replay, duplicate dispatch and crash recovery. Collection and
 drafting are separate jobs to keep collect at contents:write only. This raises
 the worst scheduled budget above 180 minutes/month; measure usage before enabling.
 
-## D018: P6 partial backfill, no fallback identity guesses
+## D018: P6 partial backfill, no fallback identity guesses (superseded)
+Superseded for S7 by D020. The failure below records the original backfill only;
+S7 now binds through the description link and pinned official manifest.
+
 The P6 GitHub REST response reported remaining=59. Stop subsequent GitHub reads
 and retain all S1-S6 cursors. PyPI returned project_urls=null for ucp-sdk, so S7
 cannot satisfy the specified binding and records failure. Do not substitute a
@@ -102,3 +105,80 @@ changed paths and the same structural schema alerts. It yielded 195 records.
 S3 is complete in the local data store. The ordinary REST collector remains for
 scheduled runs; its transport now retries transient connection failures three
 times, and its schema reader reuses unchanged blobs by hash.
+
+## D022: First-observation release amendments
+Derive amendments from post-publication merged PRs targeting a release branch,
+normative commits recorded as reachable on that branch, and differing branch/tag
+commits. Retain earlier observation comparisons, including tag retargeting.
+Store amended_by event IDs and reasons in the release material. Ref comparisons
+cite the release itself; related PRs/commits retain their own evidence citations.
+Reconcile after all complete source batches so source order cannot miss a backport.
+Offline reconciliation appends derived release revisions without advancing source
+health or cursors. Artifact republication still requires changed notes or assets.
+The additional material fields are optional under norm_version 1; old revision
+hashes remain valid and unchanged snapshots are never rewritten.
+
+## D023: Event time and observation time remain separate
+Every discovery table includes Event time (kind) beside First seen, ordered by
+UTC event time and event ID. Undated evidence says observed, not published.
+Notices retain their official date; backfill observation time never replaces it.
+The golden brief uses labeled synthetic facts only.
+
+## D024: Readable independent facts
+Table cells list true boolean facts, including individual deletion facts, plus
+explicit base and notice dates. Unknown classification remains in its dedicated
+review text. The board separates version/tag, 12-character commit, publication
+date and amended from short notes. Missing amended facts are unknown, not false.
+Neither the renderer nor this derivation infers availability or shipment.
+
+## D025: Complete cursors override the initial bound
+Use last_complete minus seven days without clamping to --start. Missing or
+explicitly incomplete cursors use the initial bound; legacy last_complete-only
+cursors remain supported. Stop updated-descending PR pagination at the overlap
+boundary, including boundary ties. Move the workflow's initial bound to
+config/collection.yaml. Snapshot endpoints still need their full current state.
+
+## D026: Breaking-table backport grouping
+R5 explicitly refines R2's timestamp ordering for the breaking table: UTC day,
+main/other bases before release branches, then event time and event ID. Other
+tables retain strict event-time order. The Base column repeats the explicit base
+fact so backports remain easy to identify. No rows are grouped away or hidden.
+
+## D027: Coverage departures use pinned provenance
+Coverage derives D020 from stored PyPI binding_ref values and D021 from S3
+health.git_recoveries, retaining the original observation time and full pinned
+head. The writer preserves recovery provenance across later REST runs. The
+history migration recovers the omitted metadata from the existing cached S3
+batch, cross-checks all its candidate materials against committed evidence, and
+records a local repair audit. No recollection, source-health timestamp change or
+claim approval is involved. Empty stores do not assert either departure.
+
+## D028: Release amendment scope
+
+Classify path evidence independently of tag and branch position. Normative paths
+take precedence. Docs-only requires a nonempty complete path list restricted to
+documentation, workflows or site assets for every supporting item. Missing paths
+and other paths outside those categories are unknown. Legacy amended remains
+available as a historical fact. It does not establish spec or docs-only scope.
+
+Merged spec release PRs use their changed-file lists, including old rename paths.
+An existing normative commit with the exact merge SHA can prove spec scope
+but its filtered path list cannot prove docs-only scope. Each scoped item pins
+both the event and path evidence revisions. The board requires visible proof.
+Local enrichment can append path evidence from the existing pinned clone
+without advancing source cursors or health.
+
+## D029: Structural detail in Markdown
+
+Markdown shows the changed file, pointer count, first five pointer examples,
+annotation names, and dependent count. Human classification comes from the
+reviewed curation field. The JSON brief retains the structured evidence as
+stored, including complete pointer and dependent lists. Escape JSON opening
+tokens in Markdown so quoted source text cannot reintroduce literal JSON.
+
+## D030: Current revisions in Release amendments
+
+The Release amendments block intersects the selected period with current
+inventory before rendering. A superseded revision cannot supply a row or its
+supporting details. Historical revisions remain available for curation and
+citation in the rest of the brief.

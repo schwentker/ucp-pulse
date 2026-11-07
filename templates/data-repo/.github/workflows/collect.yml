@@ -60,7 +60,7 @@ jobs:
       env:
         CACHE: ${{ runner.temp }}/ucp-candidates.json
         RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
-      run: '.venv/bin/python -m ucp_pulse smoke-collect --data data --start 2026-01-11T00:00:00Z
+      run: '.venv/bin/python -m ucp_pulse smoke-collect --data data
         --cache "$CACHE" --run-id "$RUN_ID"
 
         .venv/bin/python -m ucp_pulse apply-cached --data data --cache "$CACHE" --push'

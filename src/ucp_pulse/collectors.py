@@ -5,6 +5,7 @@ import re
 from datetime import timedelta
 from urllib.parse import quote
 from ucp_pulse.diff import alerts
+from ucp_pulse.amendments import amended_release, changed_pr_paths, spec_path
 from ucp_pulse.http import SourceError
 from ucp_pulse.model import candidate
 from ucp_pulse.util import digest, stamp, utc
@@ -45,7 +46,7 @@ def normalize_pr(repo, pr, merge_subject, observed, tracked=False):
                      "merged" if merged else "posted" if pr.get("created_at") else "observed", "official_repo", "S2" if repo == SPEC else "S6")
 
 
-def release_lines(tags, releases, branches, previous, observed, changes=None):
+def release_lines(tags, releases, branches, previous, observed, changes=None, events=()):
     tags = {t["name"].removeprefix("v"): t for t in tags if re.fullmatch(r"v\d{4}-\d{2}-\d{2}", t["name"])}
     releases = {r["tag_name"].removeprefix("v"): r for r in releases if re.fullmatch(r"v\d{4}-\d{2}-\d{2}", r["tag_name"])}
     branches = {b["name"].split("/", 1)[1]: b["commit"]["sha"] for b in branches if re.fullmatch(r"release/\d{4}-\d{2}-\d{2}", b["name"])}
@@ -73,10 +74,10 @@ def release_lines(tags, releases, branches, previous, observed, changes=None):
                  "amended": payload["amended"], "artifact_republished": payload["artifact_republished"], "deleted": payload["deleted"]}
         url = f"https://github.com/{SPEC}/releases/tag/v{version}"
         ref = SPEC + "@" + (tag.get("commit") or branches.get(version) or digest(payload))
-        output.append(candidate("spec_release", {"repo": SPEC, "version": version}, payload, facts,
+        output.append(amended_release(candidate("spec_release", {"repo": SPEC, "version": version}, payload, facts,
                                 evidence(url, ref, payload, release.get("body") or tag.get("name", "")),
                                 release.get("published_at") or tag.get("time") or observed,
-                                "published" if release.get("published_at") else "tagged" if tag.get("time") else "observed", "official_repo", "S1"))
+                                "published" if release.get("published_at") else "tagged" if tag.get("time") else "observed", "official_repo", "S1"), events, old))
     return output
 
 
@@ -151,12 +152,12 @@ class GitHub:
             base = prior.get("branch_head") or (ordered[i - 1]["commit"] if i else None)
             if base and head != base:
                 changes[version] = alerts(self.documents(SPEC, base), self.documents(SPEC, head))
-        items = release_lines(tags, releases, branches, old, observed, changes)
+        items = release_lines(tags, releases, branches, old, observed, changes, previous.values())
         return {"source": "S1", "complete": True, "items": items, "snapshots": [i["material"] for i in items]}
 
     def prs(self, repo, since, observed, previous=None):
         # Sort updated, not created. Never stop on an old-created PR.
-        values = self.client.pages(self.url(repo, "pulls?state=all&sort=updated&direction=desc&per_page=100"))
+        values = self.client.pages(self.url(repo, "pulls?state=all&sort=updated&direction=desc&per_page=100"), updated_since=since)
         items = []
         for pr in values:
             if utc(pr["updated_at"]) < utc(since):
@@ -166,6 +167,11 @@ class GitHub:
                 commit = self.client.json(self.url(repo, "commits/" + pr["merge_commit_sha"]))
                 subject = commit["commit"]["message"].splitlines()[0]
             item = normalize_pr(repo, pr, subject, observed, tracked=f"{repo.rsplit('/', 1)[-1]}:pr:{pr['number']}" in (previous or {}))
+            if item and repo == SPEC and item['facts']['merged'] and item['material']['base'].startswith('release/'):
+                files = self.client.pages(self.url(repo, f"pulls/{pr['number']}/files?per_page=100"))
+                if len(files) < 3000:
+                    paths = [entry[field] for entry in files for field in ('filename', 'previous_filename') if entry.get(field)]
+                    item = changed_pr_paths(item, paths)
             if item:
                 items.append(item)
         return items
@@ -196,7 +202,7 @@ class GitHub:
                 files.extend(detail.get("files", [])); page += 1
                 if page > 31:
                     raise SourceError("commit file limit reached")
-            paths = sorted({f["filename"] for f in files if f["filename"].startswith(NORMATIVE)})
+            paths = sorted({f["filename"] for f in files if spec_path(f["filename"])})
             if not paths:
                 continue
             first = self.client.json(self.url(SPEC, "commits/" + sha))

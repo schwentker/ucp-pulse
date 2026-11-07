@@ -3,8 +3,8 @@ from ucp_pulse.util import digest
 
 NORM_VERSION = 1
 FIELDS = {
-    "spec_release": {"version", "tag", "tag_object", "tag_commit", "branch_head", "published_at", "release_id", "notes", "assets", "draft", "prerelease", "deleted", "changes", "amended", "artifact_republished"},
-    "spec_pr": {"number", "title", "merge_commit_subject", "base", "state", "merged_at", "merge_sha", "labels", "body", "notice_links", "updated_at"},
+    "spec_release": {"version", "tag", "tag_object", "tag_commit", "branch_head", "published_at", "release_id", "notes", "assets", "draft", "prerelease", "deleted", "changes", "amended", "amended_by", "amendment_reasons", "amendment_items", "amended_spec", "amended_docs_only", "branch_differs_from_tag", "tag_at_branch_head", "artifact_republished"},
+    "spec_pr": {"number", "title", "merge_commit_subject", "base", "state", "merged_at", "merge_sha", "labels", "body", "notice_links", "updated_at", "files"},
     "sdk_pr": {"number", "title", "merge_commit_subject", "base", "state", "merged_at", "merge_sha", "labels", "body", "notice_links", "updated_at"},
     "normative_commit": {"sha", "parents", "subject", "files", "changes", "branches"},
     "sdk_tag": {"tag", "scheme", "tag_object", "tag_commit", "published_at", "notes", "assets", "deleted", "draft", "prerelease"},
@@ -23,7 +23,7 @@ def material(family, value):
     for key in ("title", "body", "notes", "subject", "merge_commit_subject"):
         if isinstance(value.get(key), str):
             value[key] = value[key].replace("\r\n", "\n").strip()
-    for key in ("labels", "notice_links", "discussion_urls", "branches", "dist_tags"):
+    for key in ("labels", "notice_links", "discussion_urls", "branches", "dist_tags", "amended_by", "amendment_reasons"):
         if key in value:
             value[key] = sorted(set(value[key]))
     return value

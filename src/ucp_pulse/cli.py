@@ -19,7 +19,7 @@ def main(argv=None):
     for name in ('render','verify'):
         p=commands.add_parser(name); p.add_argument('--data',required=True); p.add_argument('--curation',required=True); p.add_argument('--output',required=True); p.add_argument('--draft',action='store_true',help='Structural only, not publishable')
     p=commands.add_parser('seed'); p.add_argument('--data',required=True); p.add_argument('--evidence-sha',required=True); p.add_argument('--as-of',required=True); p.add_argument('--period',required=True); p.add_argument('--output',required=True)
-    p=commands.add_parser('smoke-collect',help='Explicit live source reads; cache candidates for transactional replay'); p.add_argument('--data',required=True); p.add_argument('--start',required=True); p.add_argument('--cache',required=True); p.add_argument('--run-id'); p.add_argument('--as-of'); p.add_argument('--only',nargs='+')
+    p=commands.add_parser('smoke-collect',help='Explicit live source reads; cache candidates for transactional replay'); p.add_argument('--data',required=True); p.add_argument('--start',help='Initial history bound; defaults to config/collection.yaml; complete cursors take precedence'); p.add_argument('--cache',required=True); p.add_argument('--run-id'); p.add_argument('--as-of'); p.add_argument('--only',nargs='+')
     p=commands.add_parser('apply-cached'); p.add_argument('--data',required=True); p.add_argument('--cache',required=True); p.add_argument('--push',action='store_true'); p.add_argument('--remote',default='origin'); p.add_argument('--crash-before-push',action='store_true')
     p=commands.add_parser('draft'); p.add_argument('--data',required=True); p.add_argument('--period',required=True); p.add_argument('--as-of',required=True); p.add_argument('--type',choices=['weekly','history'],default='weekly'); p.add_argument('--revise',action='store_true'); p.add_argument('--pr-state')
     p=commands.add_parser('draft-due'); p.add_argument('--data',required=True); p.add_argument('--repo',required=True); p.add_argument('--as-of'); p.add_argument('--revise'); p.add_argument('--publish',action='store_true',required=True)
@@ -44,9 +44,10 @@ def main(argv=None):
             if args.only:
                 if set(args.only)-set(config): raise ValueError('unknown requested sources')
                 config={k:v for k,v in config.items() if k in args.only}
+            start=stamp(args.start or load_yaml(Path(args.data)/'config/collection.yaml')['history_start'])
             observed=stamp(args.as_of or datetime.now(timezone.utc))
             client=Client(cache=str(Path(args.cache).with_suffix('.http.json')))
-            batches=collect(client,store.state('inventory'),store.state('cursors'),config,observed,args.start)
+            batches=collect(client,store.state('inventory'),store.state('cursors'),config,observed,start)
             envelope={'observed_at':observed,'run_id':args.run_id or str(uuid.uuid4()),'tracking_start':observed,'batches':batches}
             Path(args.cache).parent.mkdir(parents=True,exist_ok=True); Path(args.cache).write_text(canonical(envelope)+'\n')
             print(canonical({'requests':client.requests,'sources':[{'source':b['source'],'complete':b['complete'],'count':len(b.get('items',[])),'error':b.get('error')} for b in batches]}))

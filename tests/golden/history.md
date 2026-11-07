@@ -1,0 +1,122 @@
+# UCP Pulse, history 2020-01-01T00:00:00Z to 2020-02-10T00:00:00Z (UTC)
+
+Evidence commit: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; as of 2020-02-10T00:00:00.000000Z.
+
+Draft for review. Pending evidence is unapproved.
+
+## Headline
+
+No curated statement.
+
+## Signal
+
+No curated statement.
+
+## Watch next
+
+No curated statement.
+
+## Version board
+
+| Component | Version or tag | Tag commit (short) | Published | Amended | Notes | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| Spec release lines | v2020-01-01 | aaaaaaaaaaaa | 2020-01-01T00:00:00Z | spec | branch differs from tag; release published; tagged; branch bbbbbbbbbbbb; pending review; scope evidence [S10] | [S4] |
+| js-sdk | unknown | unknown | unknown | unknown | none recorded | |
+| python-sdk | v1.0.0 | cccccccccccc | unknown | unknown | tagged; scheme semver; pending review | [S14] |
+| ucp-schema | unknown | unknown | unknown | unknown | none recorded | |
+| PyPI | 1.0.0 | unknown | 2020-01-02T00:00:00Z | unknown | package published; pending review | [S7] |
+| npm | 1.0.0 | unknown | 2020-01-02T00:00:00Z | unknown | package published; registry labels latest; pending review | [S6] |
+
+Main ahead on normative paths: unknown (no complete ancestry count).
+
+## Breaking and pending-breaking
+
+| Change | Repo | Base | Facts | Signal | Affected | Migration | Deadline | Event time (kind) | First seen | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| feat!: synthetic change 1 | Universal-Commerce-Protocol/ucp | main | author-declared breaking; merged; base main | author-declared; pending review | unknown | unknown | unknown | 2020-01-02T00:00:00.000000Z (merged) | 2020-02-10T00:00:00.000000Z | [S11] |
+| feat!: synthetic change 2 | Universal-Commerce-Protocol/ucp | main | author-declared breaking; merged; base main | author-declared; pending review | unknown | unknown | unknown | 2020-01-02T00:00:00.000000Z (merged) | 2020-02-10T00:00:00.000000Z | [S12] |
+
+## Release amendments
+
+| Change | Repo | Facts | Signal | Affected | Migration | Deadline | Event time (kind) | First seen | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| v2020-01-01 | Universal-Commerce-Protocol/ucp | amended spec; branch differs from tag; release published; tagged | unknown; pending review | unknown | unknown | unknown | 2020-01-01T00:00:00.000000Z (published) | 2020-02-10T00:00:00.000000Z | [S4] |
+
+[S4] Structural classification: unknown.
+
+### Spec amendments
+
+- v2020-01-01 [S4]: ucp:commit:2222222222222222222222222222222222222222: synthetic normative 2 [S10] (docs/specification/synthetic.md)
+
+## Normative changes for review
+
+| Change | Repo | Facts | Signal | Affected | Migration | Deadline | Event time (kind) | First seen | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| synthetic normative 1 | Universal-Commerce-Protocol/ucp | none recorded | unknown; pending review | unknown | unknown | unknown | 2020-01-01T00:00:00.000000Z (committed) | 2020-02-10T00:00:00.000000Z | [S3] |
+| synthetic normative 2 | Universal-Commerce-Protocol/ucp | none recorded | unknown; pending review | unknown | unknown | unknown | 2020-01-02T00:00:00.000000Z (committed) | 2020-02-10T00:00:00.000000Z | [S10] |
+
+[S3] Structural classification: unknown.
+Files: docs/specification/synthetic.md
+- source/schemas/synthetic.json: 7 changed pointers (/field/0, /field/1, /field/2, /field/3, /field/4, and 2 more); request annotations: ucp_request; 1 dependent; classification unknown
+
+[S10] Structural classification: unknown.
+Files: docs/specification/synthetic.md
+- source/schemas/synthetic.json: 7 changed pointers (/field/0, /field/1, /field/2, /field/3, /field/4, and 2 more); request annotations: ucp_request; 1 dependent; classification unknown
+
+## Official notices
+
+| Change | Repo | Facts | Signal | Affected | Migration | Deadline | Event time (kind) | First seen | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Synthetic notice 1 | unknown | notice posted; official date 2020-01-01 | unknown; pending review | unknown | unknown | unknown | 2020-01-01T00:00:00.000000Z (posted) | 2020-02-10T00:00:00.000000Z | [S2] |
+| Synthetic notice 2 | unknown | notice posted; official date 2020-01-02 | unknown; pending review | unknown | unknown | unknown | 2020-01-02T00:00:00.000000Z (posted) | 2020-02-10T00:00:00.000000Z | [S9] |
+
+## Governance
+
+| Change | Repo | Facts | Signal | Affected | Migration | Deadline | Event time (kind) | First seen | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| SYNTHETIC-1.md | Universal-Commerce-Protocol/ucp | none recorded | unknown; pending review | unknown | unknown | unknown | 2020-01-01T00:00:00.000000Z (observed, not published) | 2020-02-10T00:00:00.000000Z | [S5] |
+| SYNTHETIC-2.md | Universal-Commerce-Protocol/ucp | none recorded | unknown; pending review | unknown | unknown | unknown | 2020-01-02T00:00:00.000000Z (observed, not published) | 2020-02-10T00:00:00.000000Z | [S13] |
+
+## Shopify changelog, UCP-scoped
+
+| Change | Repo | Facts | Signal | Affected | Migration | Deadline | Event time (kind) | First seen | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Synthetic changelog 1 | unknown | UCP-scoped | unknown; pending review | unknown | unknown | unknown | 2020-01-01T00:00:00.000000Z (published) | 2020-02-10T00:00:00.000000Z | [S1] |
+| Synthetic changelog 2 | unknown | UCP-scoped | unknown; pending review | unknown | unknown | unknown | 2020-01-02T00:00:00.000000Z (published) | 2020-02-10T00:00:00.000000Z | [S8] |
+
+## Coverage
+
+| Source | Last success | Failures | State / gap |
+| --- | --- | --- | --- |
+| S1 Spec releases | unknown | 0 | not configured |
+| S2 Spec PRs | unknown | 0 | not configured |
+| S3 Normative commits | 2020-02-10T00:00:00Z | 0 | not configured |
+| S4 Announcements | unknown | 0 | not configured |
+| S5 Governance | unknown | 0 | not configured |
+| S6 SDKs and schema tool | unknown | 0 | not configured |
+| S7 PyPI | unknown | 0 | not configured |
+| S8 npm | unknown | 0 | not configured |
+| S9 Discussions | unknown | 0 | not configured |
+| S10 Shopify changelog | unknown | 0 | not configured |
+
+- D021: Normative commits recovered from a pinned official Git clone; pinned head bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.
+- D020: PyPI binding via description link plus pinned manifest: Universal-Commerce-Protocol/python-sdk@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:pyproject.toml.
+
+## Source ledger
+
+- [S1] https://example.invalid/synthetic; ref synthetic@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; 2020-01-01T00:00:00.000000Z (published); official_repo.
+- [S2] https://example.invalid/synthetic; ref synthetic@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; 2020-01-01T00:00:00.000000Z (posted); official_repo.
+- [S3] https://example.invalid/synthetic; ref synthetic@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; 2020-01-01T00:00:00.000000Z (committed); official_repo.
+- [S4] https://example.invalid/synthetic; ref synthetic@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; 2020-01-01T00:00:00.000000Z (published); official_repo.
+- [S5] https://example.invalid/synthetic; ref synthetic@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; 2020-01-01T00:00:00.000000Z (observed, not published); official_repo.
+- [S6] https://example.invalid/synthetic; ref synthetic@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; 2020-01-02T00:00:00.000000Z (published); official_repo.
+- [S7] https://example.invalid/synthetic; ref synthetic@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; 2020-01-02T00:00:00.000000Z (published); official_repo.
+- [S8] https://example.invalid/synthetic; ref synthetic@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; 2020-01-02T00:00:00.000000Z (published); official_repo.
+- [S9] https://example.invalid/synthetic; ref synthetic@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; 2020-01-02T00:00:00.000000Z (posted); official_repo.
+- [S10] https://example.invalid/synthetic; ref synthetic@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; 2020-01-02T00:00:00.000000Z (committed); official_repo.
+- [S11] https://example.invalid/synthetic; ref synthetic@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; 2020-01-02T00:00:00.000000Z (merged); official_repo.
+- [S12] https://example.invalid/synthetic; ref synthetic@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; 2020-01-02T00:00:00.000000Z (merged); official_repo.
+- [S13] https://example.invalid/synthetic; ref synthetic@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; 2020-01-02T00:00:00.000000Z (observed, not published); official_repo.
+- [S14] https://example.invalid/synthetic; ref synthetic@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; 2020-02-10T00:00:00.000000Z (observed, not published); official_repo.
+
+Experimental. Independent. Not affiliated with or endorsed by Shopify, Google, or UCP governance bodies.
