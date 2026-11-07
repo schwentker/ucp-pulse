@@ -7,7 +7,7 @@ published brief traces to a stored evidence record with a source URL, an exact r
 UCP Pulse is an independent experiment. It is not affiliated with or endorsed by the UCP project, its governing
 bodies, or any company that participates in it. It is research and analysis, not legal or compliance advice.
 
-Status: experimental, v0.1. 308 offline tests pass. The engine has been run end to end locally; no scheduled
+Status: experimental, v0.1. 311 offline tests pass. The engine has been run end to end locally; no scheduled
 deployment is live yet. See [Status and known limits](#status-and-known-limits).
 
 ## Why this exists
@@ -159,7 +159,7 @@ cd ucp-pulse
 python3.12 -m venv .venv
 .venv/bin/python -m pip install -r requirements-dev.txt
 export PYTHONPATH="$PWD/src"
-PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -q    # expect: 308 passed
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -q    # expect: 311 passed
 .venv/bin/python -m ucp_pulse --help
 ```
 
@@ -170,7 +170,7 @@ token is never printed or stored in evidence.
 
 ## Status and known limits
 
-As of 2026-11-06:
+As of 2026-11-07:
 
 - The pipeline has been exercised locally: a backfill from 2026-01-11 produced 864 verified revisions (4 spec
   release lines, 391 spec PRs, 195 normative commits, 10 announcements, 6 governance files, 193 SDK PRs, 30 SDK
@@ -181,11 +181,11 @@ As of 2026-11-06:
   pinned manifest in that repository, because PyPI's project URLs are empty. Normative commits for the backfill
   were recovered from a pinned clone of the official public repository after REST connection failures; scheduled
   runs use the REST collector.
-- A release line is marked amended when its branch head differs from its tag commit, or when a merge lands on its
-  `release/*` branch after the release was published. The brief cites each such PR and commit. This includes
-  documentation and site changes, not only spec changes, so read the cited items before treating an amendment as
-  a change to the spec. An amendment is not proof that a release artifact was republished.
-- Every brief table shows event time with its kind (merged, tagged, published, posted) next to first-seen time.
+- Release amendments are classified by the paths each cited change touches: `spec` (touches `source/**`,
+  `docs/specification/**` or the versioning policy), `docs only`, or `unknown`. A line is never labeled
+  spec-amended without a cited spec-path item. Tag position ("tag at branch head") is recorded as observed; the
+  tool does not infer that a tag moved. An amendment is not proof that a release artifact was republished.
+- Every brief table shows event time with its kind (merged, tagged, published, posted) next to first-seen time. Schema detail lines are compact text; raw JSON stays in `brief.json`.
 - No semantic schema compatibility verdicts. Unknown stays unknown.
 - Actions-minute budgeting has not been measured; see the runbook before enabling schedules.
 
